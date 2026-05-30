@@ -49,7 +49,7 @@ import com.taskpro.app.ui.theme.StatusCompleted
 import com.taskpro.app.ui.theme.StatusPending
 import com.taskpro.app.ui.theme.StatusSnoozed
 
-@androidx.compose.material3.ExperimentalMaterial3Api
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     onBack: () -> Unit,
