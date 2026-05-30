@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Centred check mark within the adaptive icon safe zone -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M46.5,66.8 L37.8,58.1 C36.7,57 35,57 33.9,58.1 C32.8,59.2 32.8,60.9 33.9,62 L44.6,72.7 C45.7,73.8 47.4,73.8 48.5,72.7 L74.1,47.1 C75.2,46 75.2,44.3 74.1,43.2 C73,42.1 71.3,42.1 70.2,43.2 Z" />
+</vector>

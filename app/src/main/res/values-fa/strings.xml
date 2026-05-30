@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">تسک‌پرو</string>
+    <string name="drawer_subtitle">کارهای خود را مدیریت کنید</string>
+
+    <!-- Menu / navigation -->
+    <string name="menu">منو</string>
+    <string name="add_new_item">افزودن مورد جدید</string>
+    <string name="completed">انجام‌شده</string>
+    <string name="snoozed">به تعویق افتاده</string>
+    <string name="settings">تنظیمات</string>
+    <string name="back">بازگشت</string>
+
+    <!-- Items -->
+    <string name="item_name_label">نام مورد (مثلاً شرکت عمانی، خودم)</string>
+    <string name="rename_item">تغییر نام مورد</string>
+    <string name="empty_items_title">هنوز موردی ثبت نشده</string>
+    <string name="empty_items_subtitle">برای شروع روی «افزودن مورد جدید» بزنید</string>
+    <string name="send_a_copy">ارسال یک نسخه</string>
+
+    <!-- Tasks -->
+    <string name="add_task">افزودن کار</string>
+    <string name="task_title_label">کار</string>
+    <string name="task_notes_label">یادداشت (اختیاری)</string>
+    <string name="set_date">انتخاب تاریخ</string>
+    <string name="set_time">انتخاب ساعت</string>
+    <string name="clear_reminder">حذف یادآور</string>
+    <string name="no_tasks_yet">هنوز کاری ثبت نشده</string>
+    <string name="add_first_task">برای افزودن اولین کار روی + بزنید</string>
+    <string name="reorder_hint">برای تغییر اولویت، کار را نگه‌دارید و بکشید</string>
+    <string name="drag_to_reorder">برای جابه‌جایی بکشید</string>
+    <string name="mark_complete">علامت‌گذاری به‌عنوان انجام‌شده</string>
+    <string name="snooze">به تعویق انداختن</string>
+    <string name="resume">از سرگیری</string>
+    <string name="reopen">بازگشایی</string>
+
+    <!-- Statuses -->
+    <string name="status_pending">در انتظار</string>
+    <string name="status_completed">انجام‌شده</string>
+    <string name="status_snoozed">به تعویق افتاده</string>
+
+    <!-- Empty states -->
+    <string name="empty_completed">هنوز کار انجام‌شده‌ای نیست</string>
+    <string name="empty_snoozed">هنوز کار به تعویق افتاده‌ای نیست</string>
+
+    <!-- Settings -->
+    <string name="theme">پوسته</string>
+    <string name="theme_system">مطابق سیستم</string>
+    <string name="theme_light">روشن</string>
+    <string name="theme_dark">تاریک</string>
+    <string name="settings_about">تسک‌پرو — مدیریت ساده و رنگی کارها. انجام‌شده = سبز، در انتظار = قرمز، به تعویق افتاده = نارنجی.</string>
+
+    <!-- Common actions -->
+    <string name="add">افزودن</string>
+    <string name="save">ذخیره</string>
+    <string name="cancel">انصراف</string>
+    <string name="ok">تأیید</string>
+    <string name="delete">حذف</string>
+
+    <!-- Notifications -->
+    <string name="reminder_channel_name">یادآور کارها</string>
+    <string name="reminder_channel_desc">در زمان تعیین‌شده برای هر کار به شما اطلاع می‌دهد</string>
+    <string name="reminder_default_title">یادآوری کار</string>
+</resources>

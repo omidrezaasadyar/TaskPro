@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Compose drives the real app theme. This XML theme only styles the very
+        first frame / splash before Compose takes over, so it has no action bar.
+    -->
+    <style name="Theme.TaskPro" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
