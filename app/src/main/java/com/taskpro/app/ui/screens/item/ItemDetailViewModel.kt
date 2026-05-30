@@ -9,6 +9,7 @@ import com.taskpro.app.data.TaskRepository
 import com.taskpro.app.data.TaskStatus
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -26,6 +27,17 @@ class ItemDetailViewModel(
     val pendingTasks: StateFlow<List<Task>> =
         repository.observeTasks(itemId, TaskStatus.PENDING)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    /** Live counts for this item's Completed / Snoozed summary boxes. */
+    val completedCount: StateFlow<Int> =
+        repository.observeTasks(itemId, TaskStatus.COMPLETED)
+            .map { it.size }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+    val snoozedCount: StateFlow<Int> =
+        repository.observeTasks(itemId, TaskStatus.SNOOZED)
+            .map { it.size }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     fun addTask(title: String, notes: String, dueAt: Long?) {
         val trimmed = title.trim()

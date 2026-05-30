@@ -10,4 +10,9 @@ sealed class Screen(val route: String) {
     data object ItemDetail : Screen("item/{itemId}") {
         fun createRoute(itemId: Long) = "item/$itemId"
     }
+
+    /** Per-item Completed/Snoozed list, reached from the item's summary boxes. */
+    data object ItemStatusList : Screen("item/{itemId}/status/{status}") {
+        fun createRoute(itemId: Long, status: String) = "item/$itemId/status/$status"
+    }
 }

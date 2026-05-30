@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.taskpro.app.ui.screens.completed.CompletedScreen
 import com.taskpro.app.ui.screens.home.HomeScreen
 import com.taskpro.app.ui.screens.item.ItemDetailScreen
+import com.taskpro.app.ui.screens.item.ItemStatusListScreen
 import com.taskpro.app.ui.screens.settings.SettingsScreen
 import com.taskpro.app.ui.screens.snoozed.SnoozedScreen
 
@@ -27,7 +28,22 @@ fun NavGraph(navController: NavHostController) {
             route = Screen.ItemDetail.route,
             arguments = listOf(navArgument("itemId") { type = NavType.LongType })
         ) {
-            ItemDetailScreen(onBack = { navController.popBackStack() })
+            ItemDetailScreen(
+                onBack = { navController.popBackStack() },
+                onOpenStatusList = { itemId, status ->
+                    navController.navigate(Screen.ItemStatusList.createRoute(itemId, status))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.ItemStatusList.route,
+            arguments = listOf(
+                navArgument("itemId") { type = NavType.LongType },
+                navArgument("status") { type = NavType.StringType }
+            )
+        ) {
+            ItemStatusListScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Screen.Completed.route) {

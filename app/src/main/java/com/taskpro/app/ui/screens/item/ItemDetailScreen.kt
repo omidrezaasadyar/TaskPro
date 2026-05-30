@@ -1,5 +1,7 @@
 package com.taskpro.app.ui.screens.item
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,21 +9,27 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.Snooze
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -41,13 +49,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.taskpro.app.R
 import com.taskpro.app.data.Task
+import com.taskpro.app.data.TaskStatus
 import com.taskpro.app.ui.AppViewModelProvider
 import com.taskpro.app.ui.components.DraggableItem
 import com.taskpro.app.ui.components.TaskCard
@@ -62,10 +74,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun ItemDetailScreen(
     onBack: () -> Unit,
+    onOpenStatusList: (itemId: Long, status: String) -> Unit,
     viewModel: ItemDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val item by viewModel.item.collectAsStateWithLifecycle()
     val tasks by viewModel.pendingTasks.collectAsStateWithLifecycle()
+    val completedCount by viewModel.completedCount.collectAsStateWithLifecycle()
+    val snoozedCount by viewModel.snoozedCount.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
@@ -123,27 +138,60 @@ fun ItemDetailScreen(
             }
         }
     ) { padding ->
-        if (localTasks.isEmpty()) {
-            EmptyTasks(Modifier.padding(padding))
-        } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .dragContainer(dragState),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Completed / Snoozed summary boxes — always visible, tappable.
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                item {
-                    Text(
-                        stringResource(R.string.reorder_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
-                }
-                itemsIndexed(localTasks, key = { _, t -> t.id }) { index, task ->
+                StatusSummaryBox(
+                    label = stringResource(R.string.completed),
+                    count = completedCount,
+                    accent = StatusCompleted,
+                    icon = Icons.Default.CheckCircle,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        onOpenStatusList(viewModel.itemId, TaskStatus.COMPLETED.name)
+                    }
+                )
+                StatusSummaryBox(
+                    label = stringResource(R.string.snoozed),
+                    count = snoozedCount,
+                    accent = StatusSnoozed,
+                    icon = Icons.Default.Snooze,
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        onOpenStatusList(viewModel.itemId, TaskStatus.SNOOZED.name)
+                    }
+                )
+            }
+
+            if (localTasks.isEmpty()) {
+                EmptyTasks(Modifier.fillMaxSize())
+            } else {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .dragContainer(dragState),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    item {
+                        Text(
+                            stringResource(R.string.reorder_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                    }
+                    itemsIndexed(localTasks, key = { _, t -> t.id }) { index, task ->
                     DraggableItem(dragDropState = dragState, index = index) { isDragging ->
                         TaskCard(task = task, isDragging = isDragging) {
                             Row {
@@ -179,6 +227,7 @@ fun ItemDetailScreen(
                             }
                         }
                     }
+                    }
                 }
             }
         }
@@ -192,6 +241,64 @@ fun ItemDetailScreen(
                 showAddSheet = false
             }
         )
+    }
+}
+
+/**
+ * A tappable box summarising how many of this item's tasks are Completed or
+ * Snoozed. Tapping it opens the full list for that status.
+ */
+@Composable
+private fun StatusSummaryBox(
+    label: String,
+    count: Int,
+    accent: Color,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        // Tinted with the status accent so it reads in both light and dark themes.
+        colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.12f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(accent.copy(alpha = 0.18f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(icon, contentDescription = null, tint = accent)
+            }
+            Spacer(Modifier.size(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = count.toString(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = accent
+                )
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Icon(
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = accent
+            )
+        }
     }
 }
 

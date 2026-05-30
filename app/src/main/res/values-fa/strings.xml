@@ -50,6 +50,19 @@
     <string name="theme_dark">تاریک</string>
     <string name="settings_about">تسک‌پرو — مدیریت ساده و رنگی کارها. انجام‌شده = سبز، در انتظار = قرمز، به تعویق افتاده = نارنجی.</string>
 
+    <!-- About section -->
+    <string name="about">درباره</string>
+    <string name="about_developer">طراح و برنامه‌نویس</string>
+    <string name="about_developer_name">Omidreza Asadyar</string>
+    <string name="about_company">شرکت تولیدکننده</string>
+    <string name="about_company_name">EIS LLC</string>
+    <string name="about_version">نسخه</string>
+    <string name="about_version_format">%1$s (بیلد %2$d)</string>
+
+    <!-- Delete confirmation -->
+    <string name="delete_item_title">حذف مورد؟</string>
+    <string name="delete_item_message">«%1$s» و همهٔ کارهای آن برای همیشه حذف می‌شوند. این عمل قابل بازگشت نیست.</string>
+
     <!-- Common actions -->
     <string name="add">افزودن</string>
     <string name="save">ذخیره</string>

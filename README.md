@@ -29,6 +29,15 @@ re-orderable list of tasks with date/time reminders that sound on your phone.
 8. **Send a copy** — export an item's full task list as text from the home list
    or the item screen, to share via WhatsApp, etc.
 
+### v1.1 refinements
+- Every item gets its own **coloured left stripe** (auto-assigned) for quick recognition.
+- Each item screen shows tappable **Completed** and **Snoozed** boxes that open
+  that item's list for the chosen status.
+- Home counters are stacked (number over a small label) so they fit on one line.
+- **Settings → About** shows the designer/developer (Omidreza Asadyar), the
+  company (EIS LLC), and the app **version** (so updates are identifiable).
+- Deleting an item now asks for **confirmation** first.
+
 ---
 
 ## Tech stack

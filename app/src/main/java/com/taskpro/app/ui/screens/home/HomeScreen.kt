@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Snooze
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
@@ -40,6 +42,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -55,7 +58,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.taskpro.app.R
@@ -67,6 +73,7 @@ import com.taskpro.app.ui.navigation.Screen
 import com.taskpro.app.ui.theme.StatusCompleted
 import com.taskpro.app.ui.theme.StatusPending
 import com.taskpro.app.ui.theme.StatusSnoozed
+import com.taskpro.app.ui.theme.itemAccentColor
 import com.taskpro.app.util.ShareUtil
 import kotlinx.coroutines.launch
 
@@ -84,6 +91,7 @@ fun HomeScreen(
 
     var showAddDialog by remember { mutableStateOf(false) }
     var renameTarget by remember { mutableStateOf<Item?>(null) }
+    var deleteTarget by remember { mutableStateOf<Item?>(null) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -187,8 +195,7 @@ fun HomeScreen(
                                     ShareUtil.share(context, entry.item.name, tasks)
                                 }
                             },
-                            onDelete = { viewModel.deleteItem(entry.item) },
-                            onRename = { renameTarget = entry.item }
+                            onDelete = { deleteTarget = entry.item }
                         )
                     }
                 }
@@ -222,6 +229,31 @@ fun HomeScreen(
             onDismiss = { renameTarget = null }
         )
     }
+
+    deleteTarget?.let { target ->
+        AlertDialog(
+            onDismissRequest = { deleteTarget = null },
+            icon = { Icon(Icons.Default.DeleteOutline, null) },
+            title = { Text(stringResource(R.string.delete_item_title)) },
+            text = { Text(stringResource(R.string.delete_item_message, target.name)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.deleteItem(target)
+                    deleteTarget = null
+                }) {
+                    Text(
+                        stringResource(R.string.delete),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { deleteTarget = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -230,59 +262,108 @@ private fun ItemRow(
     entry: ItemWithTaskCounts,
     onClick: () -> Unit,
     onShare: () -> Unit,
-    onDelete: () -> Unit,
-    onRename: () -> Unit
+    onDelete: () -> Unit
 ) {
+    val accent = itemAccentColor(entry.item.id, entry.item.colorArgb)
+
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = entry.item.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(onClick = onShare) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.Send,
-                        contentDescription = stringResource(R.string.send_a_copy),
-                        tint = MaterialTheme.colorScheme.primary
+        Row(Modifier.fillMaxWidth()) {
+            // Coloured identity stripe down the left side of the item.
+            Box(
+                Modifier
+                    .width(8.dp)
+                    .fillMaxHeight()
+                    .background(accent)
+            )
+            Column(Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        Modifier
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(accent)
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = entry.item.name,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = onShare) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.Send,
+                            contentDescription = stringResource(R.string.send_a_copy),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = onDelete) {
+                        Icon(
+                            Icons.Default.DeleteOutline,
+                            contentDescription = stringResource(R.string.delete),
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+                Spacer(Modifier.height(10.dp))
+                // Status counters: number on top, small label below, all on one row.
+                Row(
+                    Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    CountCell(
+                        StatusPending,
+                        entry.pendingCount,
+                        stringResource(R.string.status_pending),
+                        Modifier.weight(1f)
+                    )
+                    CountCell(
+                        StatusSnoozed,
+                        entry.snoozedCount,
+                        stringResource(R.string.status_snoozed),
+                        Modifier.weight(1f)
+                    )
+                    CountCell(
+                        StatusCompleted,
+                        entry.completedCount,
+                        stringResource(R.string.status_completed),
+                        Modifier.weight(1f)
                     )
                 }
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        Icons.Default.DeleteOutline,
-                        contentDescription = stringResource(R.string.delete),
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
-            Spacer(Modifier.height(8.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                CountChip(StatusPending, entry.pendingCount, stringResource(R.string.status_pending))
-                CountChip(StatusSnoozed, entry.snoozedCount, stringResource(R.string.status_snoozed))
-                CountChip(StatusCompleted, entry.completedCount, stringResource(R.string.status_completed))
             }
         }
     }
 }
 
+/** A vertical counter: the number on top, a small coloured label underneath. */
 @Composable
-private fun CountChip(color: Color, count: Int, label: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            Modifier
-                .size(10.dp)
-                .clip(CircleShape)
-                .background(color)
+private fun CountCell(color: Color, count: Int, label: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = count.toString(),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = color
         )
-        Spacer(Modifier.width(6.dp))
-        Text("$count $label", style = MaterialTheme.typography.labelMedium)
+        Text(
+            text = label,
+            fontSize = 10.sp,
+            lineHeight = 12.sp,
+            color = color,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
