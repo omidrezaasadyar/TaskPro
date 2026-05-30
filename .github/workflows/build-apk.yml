@@ -30,7 +30,30 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build debug APK
-        run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
+        id: build
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+
+      - name: Capture build error
+        if: failure()
+        run: |
+          echo "## Build failed — compiler output (errors only)" > build-error.md
+          echo '```' >> build-error.md
+          # Surface the most useful lines: Kotlin/Java errors, "e:", "error:", "FAILURE", "What went wrong".
+          grep -nE "e: |error: |> Task .*FAILED|FAILURE:|What went wrong|Caused by|Unresolved reference|Compilation error" build.log \
+            | head -n 120 >> build-error.md || tail -n 120 build.log >> build-error.md
+          echo '```' >> build-error.md
+
+      - name: Publish build error to a release
+        if: failure()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-error
+          name: TaskPro — last build error
+          body_path: build-error.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

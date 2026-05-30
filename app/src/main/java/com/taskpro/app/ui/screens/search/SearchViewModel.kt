@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.taskpro.app.data.TaskRepository
 import com.taskpro.app.data.TaskWithItemName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 
 /** Backs the menu search screen: filters tasks by name across all items. */
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class SearchViewModel(private val repository: TaskRepository) : ViewModel() {
 
     private val _query = MutableStateFlow("")
