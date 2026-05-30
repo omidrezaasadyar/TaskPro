@@ -1,5 +1,6 @@
 package com.taskpro.app.ui.screens.search
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -29,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -146,12 +149,10 @@ private fun StatusDot(status: TaskStatus) {
         Modifier
             .padding(end = 4.dp)
             .size(10.dp)
-            .clipCircle(color)
+            .clip(CircleShape)
+            .background(color)
     )
 }
-
-private fun Modifier.clipCircle(color: Color) = this
-    .then(androidx.compose.foundation.background(color, androidx.compose.foundation.shape.CircleShape))
 
 @Composable
 private fun SearchPlaceholder(illustration: Int, title: String, subtitle: String) {
