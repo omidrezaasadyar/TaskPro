@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <path android:pathData="M100,16 C146.4,16 184,53.6 184,100 C184,146.4 146.4,184 100,184 C53.6,184 16,146.4 16,100 C16,53.6 53.6,16 100,16 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="40" android:startY="30"
+                android:endX="170" android:endY="180"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#1A4F46E5" />
+                <item android:offset="1.0" android:color="#1A0D9488" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Magnifier lens -->
+    <path android:pathData="M88,84 m-34,0 a34,34 0 1,0 68,0 a34,34 0 1,0 -68,0"
+        android:fillColor="#FFFFFFFF" />
+    <path android:pathData="M88,84 m-34,0 a34,34 0 1,0 68,0 a34,34 0 1,0 -68,0"
+        android:strokeColor="#FF4F46E5"
+        android:strokeWidth="7"
+        android:fillColor="#00000000" />
+
+    <!-- Handle -->
+    <path
+        android:pathData="M114,110 L140,136"
+        android:strokeColor="#FF4F46E5"
+        android:strokeWidth="12"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Tiny rows inside lens -->
+    <path android:pathData="M72,76 h32 a3,3 0 0 1 0,6 h-32 a3,3 0 0 1 0,-6 z"
+        android:fillColor="#FFCBD5E1" />
+    <path android:pathData="M72,90 h22 a3,3 0 0 1 0,6 h-22 a3,3 0 0 1 0,-6 z"
+        android:fillColor="#FFE2E8F0" />
+</vector>

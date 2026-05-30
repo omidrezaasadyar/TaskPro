@@ -38,6 +38,16 @@ re-orderable list of tasks with date/time reminders that sound on your phone.
   company (EIS LLC), and the app **version** (so updates are identifiable).
 - Deleting an item now asks for **confirmation** first.
 
+### v1.2 — search & graphics polish
+- The global Completed/Snoozed menu items were removed (they live inside each item now).
+- New **Search** in the menu/top bar finds tasks by name across all items.
+- Per-item Completed/Snoozed boxes are now **full-width rows** so labels never wrap.
+- Every screen has a soft **gradient background**, and empty states use custom
+  **vector illustrations**.
+- Reminders now raise a **special full-screen popup** over the lock screen — an
+  animated, pulsing bell with alarm sound + vibration and Done / Snooze 10 min /
+  Dismiss actions.
+
 ---
 
 ## Tech stack

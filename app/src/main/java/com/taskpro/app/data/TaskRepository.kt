@@ -38,6 +38,9 @@ class TaskRepository(
     fun observeAllByStatus(status: TaskStatus): Flow<List<Task>> =
         taskDao.observeAllByStatus(status)
 
+    fun searchTasks(query: String): Flow<List<TaskWithItemName>> =
+        taskDao.searchTasks(query)
+
     suspend fun addTask(itemId: Long, title: String, notes: String, dueAt: Long?) {
         val position = taskDao.nextPosition(itemId, TaskStatus.PENDING)
         val id = taskDao.insert(
@@ -73,6 +76,24 @@ class TaskRepository(
     suspend fun deleteTask(task: Task) {
         scheduler.cancel(task.id)
         taskDao.delete(task)
+    }
+
+    /** Marks a task complete by id — used from the full-screen reminder popup. */
+    suspend fun markCompletedById(taskId: Long) {
+        taskDao.getById(taskId)?.let { setStatus(it, TaskStatus.COMPLETED) }
+    }
+
+    /**
+     * Snoozes a task by id and re-arms its reminder [minutes] from now — used
+     * from the full-screen reminder popup's "snooze" action.
+     */
+    suspend fun snoozeByIdForMinutes(taskId: Long, minutes: Int) {
+        val task = taskDao.getById(taskId) ?: return
+        val newDue = System.currentTimeMillis() + minutes * 60_000L
+        val position = taskDao.nextPosition(task.itemId, TaskStatus.SNOOZED)
+        taskDao.update(task.copy(status = TaskStatus.SNOOZED, dueAt = newDue, position = position))
+        // Snoozed reminders still ring; schedule the follow-up alert.
+        scheduler.schedule(task.id, task.title, newDue)
     }
 
     suspend fun reorder(tasks: List<Task>) = taskDao.reorder(tasks)

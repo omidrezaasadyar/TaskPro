@@ -6,12 +6,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.taskpro.app.ui.screens.completed.CompletedScreen
 import com.taskpro.app.ui.screens.home.HomeScreen
 import com.taskpro.app.ui.screens.item.ItemDetailScreen
 import com.taskpro.app.ui.screens.item.ItemStatusListScreen
+import com.taskpro.app.ui.screens.search.SearchScreen
 import com.taskpro.app.ui.screens.settings.SettingsScreen
-import com.taskpro.app.ui.screens.snoozed.SnoozedScreen
 
 @Composable
 fun NavGraph(navController: NavHostController) {
@@ -46,12 +45,13 @@ fun NavGraph(navController: NavHostController) {
             ItemStatusListScreen(onBack = { navController.popBackStack() })
         }
 
-        composable(Screen.Completed.route) {
-            CompletedScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Screen.Snoozed.route) {
-            SnoozedScreen(onBack = { navController.popBackStack() })
+        composable(Screen.Search.route) {
+            SearchScreen(
+                onBack = { navController.popBackStack() },
+                onResultClick = { itemId ->
+                    navController.navigate(Screen.ItemDetail.createRoute(itemId))
+                }
+            )
         }
 
         composable(Screen.Settings.route) {

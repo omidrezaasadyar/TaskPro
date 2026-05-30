@@ -20,10 +20,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.taskpro.app.R
 import com.taskpro.app.data.TaskStatus
 import com.taskpro.app.ui.AppViewModelProvider
+import com.taskpro.app.ui.components.GradientBackground
 import com.taskpro.app.ui.components.TaskCard
 import com.taskpro.app.ui.theme.StatusCompleted
 
@@ -51,12 +54,14 @@ fun ItemStatusListScreen(
     )
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = {
                     // "Omani company · Completed"
                     Text("${item?.name ?: ""} · $statusLabel")
                 },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
@@ -65,6 +70,7 @@ fun ItemStatusListScreen(
             )
         }
     ) { padding ->
+        GradientBackground {
         if (tasks.isEmpty()) {
             Box(
                 Modifier
@@ -109,6 +115,7 @@ fun ItemStatusListScreen(
                     }
                 }
             }
+        }
         }
     }
 }

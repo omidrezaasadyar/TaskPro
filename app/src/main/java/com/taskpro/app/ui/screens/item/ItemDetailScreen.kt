@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.DragHandle
-import androidx.compose.material.icons.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,8 +52,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -62,6 +64,7 @@ import com.taskpro.app.data.Task
 import com.taskpro.app.data.TaskStatus
 import com.taskpro.app.ui.AppViewModelProvider
 import com.taskpro.app.ui.components.DraggableItem
+import com.taskpro.app.ui.components.GradientBackground
 import com.taskpro.app.ui.components.TaskCard
 import com.taskpro.app.ui.components.dragContainer
 import com.taskpro.app.ui.components.rememberDragDropState
@@ -109,9 +112,11 @@ fun ItemDetailScreen(
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         topBar = {
             TopAppBar(
                 title = { Text(item?.name ?: stringResource(R.string.app_name)) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
@@ -138,24 +143,25 @@ fun ItemDetailScreen(
             }
         }
     ) { padding ->
+        GradientBackground {
         Column(
             Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // Completed / Snoozed summary boxes — always visible, tappable.
-            Row(
+            // Completed / Snoozed summary boxes — each on its own full-width row
+            // so the labels never wrap. Always visible and tappable.
+            Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 StatusSummaryBox(
                     label = stringResource(R.string.completed),
                     count = completedCount,
                     accent = StatusCompleted,
                     icon = Icons.Default.CheckCircle,
-                    modifier = Modifier.weight(1f),
                     onClick = {
                         onOpenStatusList(viewModel.itemId, TaskStatus.COMPLETED.name)
                     }
@@ -165,7 +171,6 @@ fun ItemDetailScreen(
                     count = snoozedCount,
                     accent = StatusSnoozed,
                     icon = Icons.Default.Snooze,
-                    modifier = Modifier.weight(1f),
                     onClick = {
                         onOpenStatusList(viewModel.itemId, TaskStatus.SNOOZED.name)
                     }
@@ -231,6 +236,7 @@ fun ItemDetailScreen(
                 }
             }
         }
+        }
     }
 
     if (showAddSheet) {
@@ -258,7 +264,9 @@ private fun StatusSummaryBox(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(14.dp),
         // Tinted with the status accent so it reads in both light and dark themes.
         colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.12f)),
@@ -267,7 +275,7 @@ private fun StatusSummaryBox(
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(14.dp),
+                .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -280,19 +288,29 @@ private fun StatusSummaryBox(
                 Icon(icon, contentDescription = null, tint = accent)
             }
             Spacer(Modifier.size(12.dp))
-            Column(Modifier.weight(1f)) {
+            // Label on a single line; it has the whole row width so it never wraps.
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                modifier = Modifier.weight(1f)
+            )
+            // Count badge
+            Box(
+                Modifier
+                    .clip(RoundedCornerShape(50))
+                    .background(accent)
+                    .padding(horizontal = 12.dp, vertical = 4.dp)
+            ) {
                 Text(
                     text = count.toString(),
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = accent
-                )
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = Color.White
                 )
             }
+            Spacer(Modifier.size(6.dp))
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
@@ -305,19 +323,29 @@ private fun StatusSummaryBox(
 @Composable
 private fun EmptyTasks(modifier: Modifier = Modifier) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
             Icon(
-                Icons.Default.PlaylistAddCheck,
+                painter = painterResource(R.drawable.illustration_empty_tasks),
                 contentDescription = null,
-                modifier = Modifier.size(72.dp),
-                tint = MaterialTheme.colorScheme.outline
+                tint = Color.Unspecified,
+                modifier = Modifier.size(180.dp)
             )
-            Spacer(Modifier.height(12.dp))
-            Text(stringResource(R.string.no_tasks_yet), style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.height(16.dp))
+            Text(
+                stringResource(R.string.no_tasks_yet),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.add_first_task),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
             )
         }
     }

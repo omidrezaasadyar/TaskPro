@@ -19,6 +19,19 @@ interface TaskDao {
     @Query("SELECT * FROM tasks WHERE status = :status ORDER BY position ASC")
     fun observeAllByStatus(status: TaskStatus): Flow<List<Task>>
 
+    /** Search tasks by title or notes (case-insensitive), tagged with their item name. */
+    @Query(
+        """
+        SELECT tasks.*, items.name AS itemName
+        FROM tasks
+        JOIN items ON tasks.itemId = items.id
+        WHERE tasks.title LIKE '%' || :query || '%'
+           OR tasks.notes LIKE '%' || :query || '%'
+        ORDER BY tasks.status ASC, tasks.position ASC
+        """
+    )
+    fun searchTasks(query: String): Flow<List<TaskWithItemName>>
+
     @Query("SELECT * FROM tasks WHERE itemId = :itemId ORDER BY status ASC, position ASC")
     suspend fun getTasksForItem(itemId: Long): List<Task>
 

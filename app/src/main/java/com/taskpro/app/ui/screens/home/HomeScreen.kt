@@ -21,12 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteOutline
-import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Snooze
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -51,11 +49,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -68,6 +68,7 @@ import com.taskpro.app.R
 import com.taskpro.app.data.Item
 import com.taskpro.app.data.ItemWithTaskCounts
 import com.taskpro.app.ui.AppViewModelProvider
+import com.taskpro.app.ui.components.GradientBackground
 import com.taskpro.app.ui.components.NameDialog
 import com.taskpro.app.ui.navigation.Screen
 import com.taskpro.app.ui.theme.StatusCompleted
@@ -124,22 +125,12 @@ fun HomeScreen(
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.CheckCircle, null, tint = StatusCompleted) },
-                    label = { Text(stringResource(R.string.completed)) },
+                    icon = { Icon(Icons.Default.Search, null) },
+                    label = { Text(stringResource(R.string.search)) },
                     selected = false,
                     onClick = {
                         scope.launch { drawerState.close() }
-                        onNavigate(Screen.Completed)
-                    },
-                    modifier = Modifier.padding(horizontal = 12.dp)
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Snooze, null, tint = StatusSnoozed) },
-                    label = { Text(stringResource(R.string.snoozed)) },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onNavigate(Screen.Snoozed)
+                        onNavigate(Screen.Search)
                     },
                     modifier = Modifier.padding(horizontal = 12.dp)
                 )
@@ -157,12 +148,21 @@ fun HomeScreen(
         }
     ) {
         Scaffold(
+            containerColor = Color.Transparent,
             topBar = {
                 TopAppBar(
                     title = { Text(stringResource(R.string.app_name)) },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    ),
                     navigationIcon = {
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.Menu, stringResource(R.string.menu))
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { onNavigate(Screen.Search) }) {
+                            Icon(Icons.Default.Search, stringResource(R.string.search))
                         }
                     }
                 )
@@ -175,6 +175,7 @@ fun HomeScreen(
                 )
             }
         ) { padding ->
+            GradientBackground {
             if (items.isEmpty()) {
                 EmptyHome(Modifier.padding(padding))
             } else {
@@ -199,6 +200,7 @@ fun HomeScreen(
                         )
                     }
                 }
+            }
             }
         }
     }
@@ -370,22 +372,29 @@ private fun CountCell(color: Color, count: Int, label: String, modifier: Modifie
 @Composable
 private fun EmptyHome(modifier: Modifier = Modifier) {
     Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(32.dp)
+        ) {
             Icon(
-                Icons.Default.Inbox,
+                painter = painterResource(R.drawable.illustration_empty_tasks),
                 contentDescription = null,
-                modifier = Modifier.size(72.dp),
-                tint = MaterialTheme.colorScheme.outline
+                tint = Color.Unspecified,
+                modifier = Modifier.size(200.dp)
             )
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(16.dp))
             Text(
                 stringResource(R.string.empty_items_title),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
+            Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.empty_items_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
             )
         }
     }

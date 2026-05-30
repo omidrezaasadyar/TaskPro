@@ -9,7 +9,21 @@
     <string name="completed">انجام‌شده</string>
     <string name="snoozed">به تعویق افتاده</string>
     <string name="settings">تنظیمات</string>
+    <string name="search">جستجو</string>
     <string name="back">بازگشت</string>
+
+    <!-- Search -->
+    <string name="search_hint">جستجوی کارها بر اساس نام…</string>
+    <string name="search_empty_title">کارهای خود را جستجو کنید</string>
+    <string name="search_empty_subtitle">نام یک کار را بنویسید تا در همهٔ موارد پیدا شود</string>
+    <string name="search_no_results">کاری با «%1$s» پیدا نشد</string>
+    <string name="in_item">در %1$s</string>
+
+    <!-- Reminder popup -->
+    <string name="reminder_popup_heading">وقتشه!</string>
+    <string name="reminder_snooze_10">۱۰ دقیقه تعویق</string>
+    <string name="reminder_done">انجام شد</string>
+    <string name="reminder_dismiss">بستن</string>
 
     <!-- Items -->
     <string name="item_name_label">نام مورد (مثلاً شرکت عمانی، خودم)</string>

@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Vibration accompanying the reminder sound -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Show the special full-screen reminder over the lock screen -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
         android:name=".TaskProApp"
@@ -33,6 +35,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Special full-screen reminder popup; shows over the lock screen -->
+        <activity
+            android:name=".notification.ReminderActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTop"
+            android:showOnLockScreen="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.TaskPro" />
 
         <!-- Fires when a task reminder time is reached -->
         <receiver

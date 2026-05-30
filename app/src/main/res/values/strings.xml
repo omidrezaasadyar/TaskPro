@@ -9,7 +9,21 @@
     <string name="completed">Completed</string>
     <string name="snoozed">Snoozed</string>
     <string name="settings">Settings</string>
+    <string name="search">Search</string>
     <string name="back">Back</string>
+
+    <!-- Search -->
+    <string name="search_hint">Search tasks by name…</string>
+    <string name="search_empty_title">Search your tasks</string>
+    <string name="search_empty_subtitle">Type a task name to find it across all items</string>
+    <string name="search_no_results">No tasks match “%1$s”</string>
+    <string name="in_item">in %1$s</string>
+
+    <!-- Reminder popup -->
+    <string name="reminder_popup_heading">It\'s time!</string>
+    <string name="reminder_snooze_10">Snooze 10 min</string>
+    <string name="reminder_done">Mark done</string>
+    <string name="reminder_dismiss">Dismiss</string>
 
     <!-- Items -->
     <string name="item_name_label">Item name (e.g. Omani Company, Myself)</string>
