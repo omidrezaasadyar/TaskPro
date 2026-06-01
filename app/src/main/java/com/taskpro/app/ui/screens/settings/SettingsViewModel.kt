@@ -2,6 +2,7 @@ package com.taskpro.app.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.taskpro.app.settings.BackgroundStyle
 import com.taskpro.app.settings.SettingsRepository
 import com.taskpro.app.settings.ThemeMode
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +15,14 @@ class SettingsViewModel(private val repository: SettingsRepository) : ViewModel(
     val themeMode: StateFlow<ThemeMode> = repository.themeMode
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ThemeMode.SYSTEM)
 
+    val backgroundStyle: StateFlow<BackgroundStyle> = repository.backgroundStyle
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), BackgroundStyle.GRADIENT)
+
     fun setThemeMode(mode: ThemeMode) {
         viewModelScope.launch { repository.setThemeMode(mode) }
+    }
+
+    fun setBackgroundStyle(style: BackgroundStyle) {
+        viewModelScope.launch { repository.setBackgroundStyle(style) }
     }
 }

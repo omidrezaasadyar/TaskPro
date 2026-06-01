@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.taskpro.app.ui.AppViewModelProvider
+import com.taskpro.app.ui.components.ProvideBackgroundStyle
 import com.taskpro.app.ui.navigation.NavGraph
 import com.taskpro.app.ui.screens.settings.SettingsViewModel
 import com.taskpro.app.ui.theme.TaskProTheme
@@ -34,14 +35,17 @@ class MainActivity : ComponentActivity() {
             val settingsViewModel: SettingsViewModel =
                 viewModel(factory = AppViewModelProvider.Factory)
             val themeMode by settingsViewModel.themeMode.collectAsStateWithLifecycle()
+            val backgroundStyle by settingsViewModel.backgroundStyle.collectAsStateWithLifecycle()
 
             TaskProTheme(themeMode = themeMode) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-                    NavGraph(navController = navController)
+                ProvideBackgroundStyle(backgroundStyle) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        val navController = rememberNavController()
+                        NavGraph(navController = navController)
+                    }
                 }
             }
         }

@@ -21,6 +21,13 @@ val PendingContainerDark = Color(0xFF4E2A2A)
 val CompletedContainerDark = Color(0xFF24402A)
 val SnoozedContainerDark = Color(0xFF4A3414)
 
+// Readable text colours on the soft containers.
+val OnContainerLight = Color(0xFF1F2430) // near-black for light cards
+val OnContainerDark = Color(0xFFECEFF4)  // near-white for dark cards
+// Secondary text (task notes) — distinct from the title colour.
+val NoteTextLight = Color(0xFF6B7280)    // medium grey
+val NoteTextDark = Color(0xFFB9C0CC)     // light grey
+
 /**
  * Palette used to give each item its own coloured stripe. Items are assigned a
  * colour deterministically (see [itemAccentColor]) so the same item always

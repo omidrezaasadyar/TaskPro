@@ -1,10 +1,13 @@
 package com.taskpro.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,17 +25,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.taskpro.app.data.Task
 import com.taskpro.app.data.TaskStatus
+import com.taskpro.app.ui.theme.LocalAppDarkTheme
+import com.taskpro.app.ui.theme.NoteTextDark
+import com.taskpro.app.ui.theme.NoteTextLight
 import com.taskpro.app.ui.theme.statusPalette
 import com.taskpro.app.util.DateFormat
+import com.taskpro.app.util.isRtlText
 
 /**
- * A single task row with a coloured status stripe and accent. Trailing
- * content (action buttons / drag handle) is supplied by the caller.
+ * A single task row.
+ *
+ * Layout: a coloured status stripe on the left, then the task content. The
+ * title (and any note) occupy a full-width line and align right for Persian /
+ * left for Latin text. The action buttons supplied via [trailing] sit on their
+ * own row below the text so long titles never collide with the controls.
  */
 @Composable
 fun TaskCard(
@@ -43,6 +54,10 @@ fun TaskCard(
 ) {
     val palette = statusPalette(task.status)
     val strike = task.status == TaskStatus.COMPLETED
+    val noteColor = if (LocalAppDarkTheme.current) NoteTextDark else NoteTextLight
+
+    val titleAlign = if (isRtlText(task.title)) TextAlign.Right else TextAlign.Left
+    val noteAlign = if (isRtlText(task.notes)) TextAlign.Right else TextAlign.Left
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -51,40 +66,47 @@ fun TaskCard(
         elevation = CardDefaults.cardElevation(defaultElevation = if (isDragging) 8.dp else 1.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            // IntrinsicSize.Min lets the stripe stretch to the card's height.
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
         ) {
-            // Coloured status stripe
             Box(
                 Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp, top = 10.dp, bottom = 10.dp)
                     .width(5.dp)
-                    .height(48.dp)
+                    .fillMaxHeight()
                     .clip(RoundedCornerShape(3.dp))
                     .background(palette.accent)
             )
             Column(
                 Modifier
                     .weight(1f)
-                    .padding(12.dp)
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
             ) {
+                // Title — full width, smaller, not bold, direction-aware.
                 Text(
                     text = task.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = palette.onContainer,
+                    textAlign = titleAlign,
                     textDecoration = if (strike) TextDecoration.LineThrough else null,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    modifier = Modifier.fillMaxWidth()
                 )
+
+                // Optional note — distinct colour, direction-aware.
                 if (task.notes.isNotBlank()) {
-                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.height(3.dp))
                     Text(
                         text = task.notes,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = noteColor,
+                        textAlign = noteAlign,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
+
+                // Optional reminder time.
                 task.dueAt?.let { due ->
                     Spacer(Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -102,8 +124,16 @@ fun TaskCard(
                         )
                     }
                 }
+
+                // Action buttons on their own row, below the text.
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    trailing()
+                }
             }
-            trailing()
         }
     }
 }

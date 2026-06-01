@@ -38,6 +38,19 @@ re-orderable list of tasks with date/time reminders that sound on your phone.
   company (EIS LLC), and the app **version** (so updates are identifiable).
 - Deleting an item now asks for **confirmation** first.
 
+### v1.3 — readability & customisation
+- **Fixed** the light-theme bug where task cards showed black text on a dark
+  card: status colours now follow the *app* theme, not the device theme.
+- Task text is smaller and not bold; the title takes a **full line** and aligns
+  **right for Persian / left for English** automatically, with action buttons
+  on their own row beneath it.
+- Task **notes** use a distinct, readable colour.
+- The **add-new-item** button can be **dragged** anywhere so it never hides
+  content (and the list now keeps clear space beneath it).
+- **Settings → Background**: choose Plain, Soft gradient, or Aurora.
+- Polished the per-item Completed/Snoozed boxes (solid icon chips, readable in
+  both themes).
+
 ### v1.2 — search & graphics polish
 - The global Completed/Snoozed menu items were removed (they live inside each item now).
 - New **Search** in the menu/top bar finds tasks by name across all items.

@@ -62,6 +62,10 @@
     <string name="theme_system">Follow system</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="background">Background</string>
+    <string name="background_plain">Plain</string>
+    <string name="background_gradient">Soft gradient</string>
+    <string name="background_aurora">Aurora</string>
     <string name="settings_about">TaskPro — a simple, colourful task manager. Done = green, pending = red, snoozed = orange.</string>
 
     <!-- About section -->

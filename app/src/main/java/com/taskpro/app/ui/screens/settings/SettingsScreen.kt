@@ -9,15 +9,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Gradient
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SettingsBrightness
+import androidx.compose.material.icons.filled.Wallpaper
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -40,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.taskpro.app.settings.BackgroundStyle
 import com.taskpro.app.ui.components.GradientBackground
 import com.taskpro.app.BuildConfig
 import com.taskpro.app.R
@@ -53,6 +59,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val theme by viewModel.themeMode.collectAsStateWithLifecycle()
+    val background by viewModel.backgroundStyle.collectAsStateWithLifecycle()
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -72,6 +79,7 @@ fun SettingsScreen(
         Column(
             Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(padding)
                 .padding(16.dp)
         ) {
@@ -99,6 +107,35 @@ fun SettingsScreen(
                         label = stringResource(R.string.theme_dark),
                         selected = theme == ThemeMode.DARK,
                         onClick = { viewModel.setThemeMode(ThemeMode.DARK) }
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(24.dp))
+            Text(
+                stringResource(R.string.background),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            Card(Modifier.fillMaxWidth()) {
+                Column {
+                    ThemeOption(
+                        icon = Icons.Default.Wallpaper,
+                        label = stringResource(R.string.background_plain),
+                        selected = background == BackgroundStyle.PLAIN,
+                        onClick = { viewModel.setBackgroundStyle(BackgroundStyle.PLAIN) }
+                    )
+                    ThemeOption(
+                        icon = Icons.Default.Gradient,
+                        label = stringResource(R.string.background_gradient),
+                        selected = background == BackgroundStyle.GRADIENT,
+                        onClick = { viewModel.setBackgroundStyle(BackgroundStyle.GRADIENT) }
+                    )
+                    ThemeOption(
+                        icon = Icons.Default.AutoAwesome,
+                        label = stringResource(R.string.background_aurora),
+                        selected = background == BackgroundStyle.AURORA,
+                        onClick = { viewModel.setBackgroundStyle(BackgroundStyle.AURORA) }
                     )
                 }
             }

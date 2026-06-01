@@ -68,6 +68,7 @@ import com.taskpro.app.ui.components.GradientBackground
 import com.taskpro.app.ui.components.TaskCard
 import com.taskpro.app.ui.components.dragContainer
 import com.taskpro.app.ui.components.rememberDragDropState
+import com.taskpro.app.ui.theme.LocalAppDarkTheme
 import com.taskpro.app.ui.theme.StatusCompleted
 import com.taskpro.app.ui.theme.StatusSnoozed
 import com.taskpro.app.util.ShareUtil
@@ -199,37 +200,32 @@ fun ItemDetailScreen(
                     itemsIndexed(localTasks, key = { _, t -> t.id }) { index, task ->
                     DraggableItem(dragDropState = dragState, index = index) { isDragging ->
                         TaskCard(task = task, isDragging = isDragging) {
-                            Row {
-                                IconButton(onClick = { viewModel.complete(task) }) {
-                                    Icon(
-                                        Icons.Default.Check,
-                                        stringResource(R.string.mark_complete),
-                                        tint = StatusCompleted
-                                    )
-                                }
-                                IconButton(onClick = { viewModel.snooze(task) }) {
-                                    Icon(
-                                        Icons.Default.Snooze,
-                                        stringResource(R.string.snooze),
-                                        tint = StatusSnoozed
-                                    )
-                                }
-                                IconButton(onClick = { viewModel.deleteTask(task) }) {
-                                    Icon(
-                                        Icons.Default.DeleteOutline,
-                                        stringResource(R.string.delete),
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
-                                }
+                            IconButton(onClick = { viewModel.complete(task) }) {
                                 Icon(
-                                    Icons.Default.DragHandle,
-                                    contentDescription = stringResource(R.string.drag_to_reorder),
-                                    modifier = Modifier
-                                        .align(Alignment.CenterVertically)
-                                        .padding(end = 8.dp),
-                                    tint = MaterialTheme.colorScheme.outline
+                                    Icons.Default.Check,
+                                    stringResource(R.string.mark_complete),
+                                    tint = StatusCompleted
                                 )
                             }
+                            IconButton(onClick = { viewModel.snooze(task) }) {
+                                Icon(
+                                    Icons.Default.Snooze,
+                                    stringResource(R.string.snooze),
+                                    tint = StatusSnoozed
+                                )
+                            }
+                            IconButton(onClick = { viewModel.deleteTask(task) }) {
+                                Icon(
+                                    Icons.Default.DeleteOutline,
+                                    stringResource(R.string.delete),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                            Icon(
+                                Icons.Default.DragHandle,
+                                contentDescription = stringResource(R.string.drag_to_reorder),
+                                tint = MaterialTheme.colorScheme.outline
+                            )
                         }
                     }
                     }
@@ -263,14 +259,17 @@ private fun StatusSummaryBox(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val dark = LocalAppDarkTheme.current
+    // A clearly-bounded soft container that reads in both themes.
+    val container = if (dark) accent.copy(alpha = 0.22f) else accent.copy(alpha = 0.14f)
+
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(14.dp),
-        // Tinted with the status accent so it reads in both light and dark themes.
-        colors = CardDefaults.cardColors(containerColor = accent.copy(alpha = 0.12f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        colors = CardDefaults.cardColors(containerColor = container),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             Modifier
@@ -278,14 +277,20 @@ private fun StatusSummaryBox(
                 .padding(horizontal = 14.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Solid accent chip with a white glyph so it stays inside its frame.
             Box(
                 Modifier
-                    .size(40.dp)
+                    .size(38.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(accent.copy(alpha = 0.18f)),
+                    .background(accent),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = accent)
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(22.dp)
+                )
             }
             Spacer(Modifier.size(12.dp))
             // Label on a single line; it has the whole row width so it never wraps.
@@ -293,6 +298,7 @@ private fun StatusSummaryBox(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 modifier = Modifier.weight(1f)
             )

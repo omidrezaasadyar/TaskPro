@@ -1,6 +1,7 @@
 package com.taskpro.app.ui.screens.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,13 +55,16 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -166,41 +171,49 @@ fun HomeScreen(
                         }
                     }
                 )
-            },
-            floatingActionButton = {
-                ExtendedFloatingActionButton(
-                    onClick = { showAddDialog = true },
-                    icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text(stringResource(R.string.add_new_item)) }
-                )
             }
         ) { padding ->
             GradientBackground {
-            if (items.isEmpty()) {
-                EmptyHome(Modifier.padding(padding))
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    items(items, key = { it.item.id }) { entry ->
-                        ItemRow(
-                            entry = entry,
-                            onClick = { onItemClick(entry.item.id) },
-                            onShare = {
-                                scope.launch {
-                                    val tasks = viewModel.exportData(entry.item.id)
-                                    ShareUtil.share(context, entry.item.name, tasks)
-                                }
-                            },
-                            onDelete = { deleteTarget = entry.item }
-                        )
+                Box(Modifier.fillMaxSize()) {
+                    if (items.isEmpty()) {
+                        EmptyHome(Modifier.padding(padding))
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(padding),
+                            // Extra bottom space so the last item is never hidden
+                            // behind the floating button.
+                            contentPadding = PaddingValues(
+                                start = 16.dp, end = 16.dp, top = 16.dp, bottom = 96.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(items, key = { it.item.id }) { entry ->
+                                ItemRow(
+                                    entry = entry,
+                                    onClick = { onItemClick(entry.item.id) },
+                                    onShare = {
+                                        scope.launch {
+                                            val tasks = viewModel.exportData(entry.item.id)
+                                            ShareUtil.share(context, entry.item.name, tasks)
+                                        }
+                                    },
+                                    onDelete = { deleteTarget = entry.item }
+                                )
+                            }
+                        }
                     }
+
+                    // Draggable "add new item" button — long-press & drag to move
+                    // it anywhere so it never permanently covers content.
+                    DraggableAddButton(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(padding),
+                        onClick = { showAddDialog = true }
+                    )
                 }
-            }
             }
         }
     }
@@ -398,4 +411,32 @@ private fun EmptyHome(modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+/**
+ * The "add new item" button. It floats in the bottom-end corner by default but
+ * can be dragged anywhere on the screen (long-press or just drag), so it never
+ * permanently hides list content beneath it.
+ */
+@Composable
+private fun DraggableAddButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var offset by remember { mutableStateOf(Offset.Zero) }
+
+    ExtendedFloatingActionButton(
+        onClick = onClick,
+        icon = { Icon(Icons.Default.Add, null) },
+        text = { Text(stringResource(R.string.add_new_item)) },
+        modifier = modifier
+            .offset { IntOffset(offset.x.toInt(), offset.y.toInt()) }
+            .padding(16.dp)
+            .pointerInput(Unit) {
+                detectDragGestures { change, drag ->
+                    change.consume()
+                    offset += drag
+                }
+            }
+    )
 }
