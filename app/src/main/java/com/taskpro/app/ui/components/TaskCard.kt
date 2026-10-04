@@ -1,6 +1,7 @@
 package com.taskpro.app.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,6 +51,7 @@ fun TaskCard(
     task: Task,
     modifier: Modifier = Modifier,
     isDragging: Boolean = false,
+    onClick: (() -> Unit)? = null,
     trailing: @Composable () -> Unit = {}
 ) {
     val palette = statusPalette(task.status)
@@ -60,7 +62,9 @@ fun TaskCard(
     val noteAlign = if (isRtlText(task.notes)) TextAlign.Right else TextAlign.Left
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
         shape = RoundedCornerShape(14.dp),
         colors = CardDefaults.cardColors(containerColor = palette.container),
         elevation = CardDefaults.cardElevation(defaultElevation = if (isDragging) 8.dp else 1.dp)

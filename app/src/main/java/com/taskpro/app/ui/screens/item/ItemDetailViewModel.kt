@@ -45,6 +45,14 @@ class ItemDetailViewModel(
         viewModelScope.launch { repository.addTask(itemId, trimmed, notes.trim(), dueAt) }
     }
 
+    fun updateTask(task: Task, title: String, notes: String, dueAt: Long?) {
+        val trimmed = title.trim()
+        if (trimmed.isEmpty()) return
+        viewModelScope.launch {
+            repository.updateTask(task.copy(title = trimmed, notes = notes.trim(), dueAt = dueAt))
+        }
+    }
+
     fun complete(task: Task) = setStatus(task, TaskStatus.COMPLETED)
     fun snooze(task: Task) = setStatus(task, TaskStatus.SNOOZED)
 

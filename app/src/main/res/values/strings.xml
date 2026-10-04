@@ -34,6 +34,7 @@
 
     <!-- Tasks -->
     <string name="add_task">Add task</string>
+    <string name="edit_task">Edit task</string>
     <string name="task_title_label">Task</string>
     <string name="task_notes_label">Notes (optional)</string>
     <string name="set_date">Set date</string>

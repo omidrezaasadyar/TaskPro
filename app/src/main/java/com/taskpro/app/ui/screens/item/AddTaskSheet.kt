@@ -39,24 +39,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.taskpro.app.R
+import com.taskpro.app.data.Task
 import com.taskpro.app.util.DateFormat
 import java.util.Calendar
 
 /**
- * Bottom sheet for creating a task with an optional date + time reminder.
+ * Bottom sheet for creating or editing a task with an optional date + time reminder.
  * The phone will sound an alert at the chosen moment.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskSheet(
+    taskToEdit: Task? = null,
     onDismiss: () -> Unit,
     onConfirm: (title: String, notes: String, dueAt: Long?) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val isEditMode = taskToEdit != null
 
-    var title by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
-    var dueAt by remember { mutableStateOf<Long?>(null) }
+    var title by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.title.orEmpty()) }
+    var notes by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.notes.orEmpty()) }
+    var dueAt by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.dueAt) }
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
@@ -71,7 +74,7 @@ fun AddTaskSheet(
                 .navigationBarsPadding()
         ) {
             Text(
-                stringResource(R.string.add_task),
+                stringResource(if (isEditMode) R.string.edit_task else R.string.add_task),
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.height(16.dp))
@@ -122,7 +125,7 @@ fun AddTaskSheet(
                 onClick = { onConfirm(title, notes, dueAt) },
                 enabled = title.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
-            ) { Text(stringResource(R.string.add)) }
+            ) { Text(stringResource(if (isEditMode) R.string.save else R.string.add)) }
         }
     }
 

@@ -34,6 +34,7 @@
 
     <!-- Tasks -->
     <string name="add_task">افزودن کار</string>
+    <string name="edit_task">ویرایش کار</string>
     <string name="task_title_label">کار</string>
     <string name="task_notes_label">یادداشت (اختیاری)</string>
     <string name="set_date">انتخاب تاریخ</string>

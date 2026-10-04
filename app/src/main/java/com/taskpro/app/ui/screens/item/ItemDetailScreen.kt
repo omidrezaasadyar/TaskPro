@@ -89,6 +89,7 @@ fun ItemDetailScreen(
     val scope = rememberCoroutineScope()
 
     var showAddSheet by remember { mutableStateOf(false) }
+    var taskBeingEdited by remember { mutableStateOf<Task?>(null) }
 
     // Local mutable copy so drag reordering feels instant; resynced from the
     // database whenever we are not mid-drag.
@@ -199,7 +200,15 @@ fun ItemDetailScreen(
                     }
                     itemsIndexed(localTasks, key = { _, t -> t.id }) { index, task ->
                     DraggableItem(dragDropState = dragState, index = index) { isDragging ->
-                        TaskCard(task = task, isDragging = isDragging) {
+                        TaskCard(
+                            task = task,
+                            isDragging = isDragging,
+                            onClick = {
+                                if (!isDragging) {
+                                    taskBeingEdited = task
+                                }
+                            }
+                        ) {
                             IconButton(onClick = { viewModel.complete(task) }) {
                                 Icon(
                                     Icons.Default.Check,
@@ -241,6 +250,17 @@ fun ItemDetailScreen(
             onConfirm = { title, notes, dueAt ->
                 viewModel.addTask(title, notes, dueAt)
                 showAddSheet = false
+            }
+        )
+    }
+
+    taskBeingEdited?.let { task ->
+        AddTaskSheet(
+            taskToEdit = task,
+            onDismiss = { taskBeingEdited = null },
+            onConfirm = { title, notes, dueAt ->
+                viewModel.updateTask(task, title, notes, dueAt)
+                taskBeingEdited = null
             }
         )
     }
