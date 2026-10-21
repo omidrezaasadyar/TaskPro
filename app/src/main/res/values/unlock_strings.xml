@@ -1,5 +1,6 @@
 <resources>
     <string name="unlock_create_master">Create master password</string>
+    <string name="unlock_create_new_vault">Start a new empty vault</string>
     <string name="unlock_existing_vault_note">An encrypted vault is already stored on this device. Creating a master password here starts a new empty vault after saving an encrypted copy of the previous one. To keep using that vault, cancel and unlock it or use its recovery key.</string>
     <string name="unlock_create_confirm_title">Create a new empty vault?</string>
     <string name="unlock_create_confirm_text">First choose where to save an encrypted backup of the existing vault. Its backup-file password will be the new master password you just entered. Opening the old vault data still requires its original master password or recovery key. After the backup is saved and verified, a new empty vault will become active. Tasks data and settings will not change. Canceling or a failed backup leaves the current vault unchanged.</string>
@@ -11,6 +12,7 @@
     <string name="unlock_touch">Touch the sensor to unlock</string>
     <string name="unlock_another">or unlock another way</string>
     <string name="unlock_pin">Use PIN</string>
+    <string name="unlock_set_up_pin">Set up PIN</string>
     <string name="unlock_master">Master password</string>
     <string name="unlock_title">Unlock Vault</string>
     <string name="unlock_fingerprint">Unlock with fingerprint</string>

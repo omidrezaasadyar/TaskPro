@@ -44,7 +44,6 @@
     <string name="vault_duplicate">Duplicate</string>
     <string name="vault_copy">Copy</string>
     <string name="vault_copied">Copied. Vaurivo will try to clear its unchanged clipboard entry after 30 seconds.</string>
-    <string name="vault_reveal">Show or hide value</string>
     <string name="vault_delete_record">Delete this record permanently?</string>
     <string name="vault_delete_category">Delete this category and its subcategories? Records will be kept in Uncategorized.</string>
     <string name="vault_empty">No records here yet</string>

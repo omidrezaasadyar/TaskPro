@@ -88,7 +88,7 @@ fun VaultScreen(repository: VaultRepository, clipboard: VaultClipboard, onWorksp
         creatingMaster = false
         if (state.document == null) clipboard.clearOwned()
     }
-    Scaffold(containerColor = if (state.exists && state.document == null) Color(0xff0c1110) else MaterialTheme.colorScheme.background, topBar = {
+    Scaffold(containerColor = if (state.exists && state.document == null) com.taskpro.app.ui.theme.LocalVaurivoColors.current.canvas else MaterialTheme.colorScheme.background, topBar = {
         if (!state.exists || state.pendingRecovery != null) {
         TopAppBar(title = { Text(stringResource(R.string.vault_title)) },
             navigationIcon = { IconButton(onClick = onWorkspace) { Icon(Icons.Default.Apps, stringResource(R.string.workspace_switch)) } },

@@ -1,5 +1,6 @@
 <resources>
     <string name="unlock_create_master">ایجاد رمز اصلی</string>
+    <string name="unlock_create_new_vault">ایجاد گاوصندوق خالی جدید</string>
     <string name="unlock_existing_vault_note">یک گاوصندوق رمزگذاری‌شده در این دستگاه ذخیره شده است. ایجاد رمز اصلی در این بخش، پس از ذخیره نسخه رمزگذاری‌شده قبلی، گاوصندوق خالی جدیدی ایجاد می‌کند. برای استفاده از اطلاعات قبلی، لغو کنید و با رمز اصلی یا کلید بازیابی وارد شوید.</string>
     <string name="unlock_create_confirm_title">گاوصندوق خالی جدید ایجاد شود؟</string>
     <string name="unlock_create_confirm_text">ابتدا محل ذخیره نسخه پشتیبان رمزگذاری‌شده گاوصندوق قبلی را انتخاب کنید. رمز فایل پشتیبان همان رمز اصلی جدیدی است که وارد کردید. باز کردن اطلاعات قدیمی همچنان به رمز اصلی قبلی یا کلید بازیابی آن نیاز دارد. پس از ذخیره و بررسی پشتیبان، گاوصندوق خالی جدید فعال می‌شود. اطلاعات و تنظیمات بخش کارها تغییر نمی‌کنند. لغو یا خطای پشتیبان، گاوصندوق فعلی را تغییر نمی‌دهد.</string>
@@ -11,6 +12,7 @@
     <string name="unlock_touch">برای باز کردن حسگر را لمس کنید</string>
     <string name="unlock_another">یا از روش دیگری وارد شوید</string>
     <string name="unlock_pin">ورود با پین</string>
+    <string name="unlock_set_up_pin">تنظیم پین</string>
     <string name="unlock_master">رمز اصلی</string>
     <string name="unlock_title">باز کردن گاوصندوق</string>
     <string name="unlock_fingerprint">باز کردن با اثر انگشت</string>

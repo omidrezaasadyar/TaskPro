@@ -166,7 +166,7 @@ class VaultScreenTest {
         compose.onNodeWithText("New master password").performTextInput("recovered synthetic master")
         compose.onNodeWithText("Confirm password").performTextInput("recovered synthetic master")
         val beforeRecovery = repo.state.value.generation
-        compose.onNodeWithText("Reset master password").performScrollTo().performClick()
+        compose.onNodeWithText("Reset master password").performClick()
         compose.waitUntil(10_000) { repo.state.value.generation > beforeRecovery &&
             compose.onAllNodesWithText("Reset master password").fetchSemanticsNodes().isEmpty() }
         compose.onNodeWithText("Master password").performClick()

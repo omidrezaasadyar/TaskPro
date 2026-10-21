@@ -54,7 +54,7 @@ class VaultUnlockUiTest {
     }
     @Test fun lockedLandingRemainsVisibleUntilAnUnlockMethodIsSelected() {
         compose.onNodeWithText("Vault is locked").assertIsDisplayed()
-        compose.onNodeWithText("Use PIN").assertIsDisplayed()
+        compose.onNodeWithText("Set up PIN").assertIsDisplayed()
         compose.onNode(hasText("Master password") and hasSetTextAction()).assertDoesNotExist()
         compose.onNodeWithText("Master password").performClick()
         compose.onNode(hasText("Master password") and hasSetTextAction()).assertExists()

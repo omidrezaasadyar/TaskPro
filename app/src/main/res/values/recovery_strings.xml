@@ -6,6 +6,7 @@
     <string name="vault_recovery_setup">Recovery Key Management</string>
     <string name="vault_recovery_generate">Generate recovery key</string>
     <string name="vault_recovery_key">Recovery key</string>
+    <string name="vault_recovery_key_displayed">Recovery key displayed. Use Copy to save it securely.</string>
     <string name="vault_recovery_reset">Reset master password</string>
     <string name="vault_recovery_saved">I have saved my recovery key safely</string>
     <string name="vault_recovery_save_note">Save this key outside Vaurivo and confirm below. Anyone with this key and your vault file can recover your data. Create a new backup after setup. Older backups retain their previous recovery access.</string>

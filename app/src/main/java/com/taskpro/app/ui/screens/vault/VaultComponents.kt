@@ -16,16 +16,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.semantics.password
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
 import com.taskpro.app.R
+import com.taskpro.app.ui.components.shared.SecureInputField
 import com.taskpro.app.vault.*
 import com.taskpro.app.ui.screens.vaultAccent
 import kotlinx.coroutines.Dispatchers
@@ -48,22 +45,22 @@ fun Modifier.vaultActivity(): Modifier {
 @Composable
 fun VaultInput(label: String, value: String, change: (String) -> Unit, secret: Boolean = false,
                type: KeyboardType = KeyboardType.Text, multiline: Boolean = false, modifier: Modifier = Modifier) {
-    var revealed by remember { mutableStateOf(false) }
     val app = LocalContext.current.applicationContext as? com.taskpro.app.TaskProApp
+    if (secret) {
+        val sessionKey = remember { Any() }
+        SecureInputField(label, value, { app?.container?.vaultRepository?.touch(); change(it) }, sessionKey, true,
+            modifier = modifier, type = FieldType.SECRET, keyboardType = type)
+        return
+    }
     OutlinedTextField(
         value = value, onValueChange = { app?.container?.vaultRepository?.touch(); change(it) }, label = { Text(label) },
-        modifier = modifier.fillMaxWidth().then(if (secret) Modifier.semantics { password() } else Modifier),
+        modifier = modifier.fillMaxWidth(),
         singleLine = !multiline, minLines = if (multiline) 3 else 1,
         textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Content),
-        keyboardOptions = KeyboardOptions(keyboardType = if (secret) KeyboardType.Password else type, autoCorrectEnabled = false),
-        visualTransformation = if (secret && !revealed) PasswordVisualTransformation() else VisualTransformation.None,
+        keyboardOptions = KeyboardOptions(keyboardType = type, autoCorrectEnabled = false),
         shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
         colors = OutlinedTextFieldDefaults.colors(focusedBorderColor = vaultAccent(),
-            focusedLabelColor = vaultAccent(), cursorColor = vaultAccent()),
-        leadingIcon = if (secret) ({ Icon(Icons.Default.Lock, null) }) else null,
-        trailingIcon = if (secret) ({ IconButton(onClick = { revealed = !revealed }) {
-            Icon(if (revealed) Icons.Default.VisibilityOff else Icons.Default.Visibility, stringResource(R.string.vault_reveal))
-        } }) else null
+            focusedLabelColor = vaultAccent(), cursorColor = vaultAccent())
     )
 }
 

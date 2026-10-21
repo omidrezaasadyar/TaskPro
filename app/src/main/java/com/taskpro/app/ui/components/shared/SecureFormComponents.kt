@@ -65,6 +65,7 @@ fun SecureInputField(label: String, value: String, onValueChange: (String) -> Un
             // SetText and focus remain explicit accessible commands; reveal is a sibling target.
             val redacted = if (secret) Modifier.clearAndSetSemantics {
                 contentDescription = "$label, ${if (revealed) shown else hidden}"
+                text = AnnotatedString(label)
                 password()
                 focused = hasFocus
                 isEditable = available && !readOnly

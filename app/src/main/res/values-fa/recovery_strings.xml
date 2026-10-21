@@ -6,6 +6,7 @@
     <string name="vault_recovery_setup">مدیریت کلید بازیابی</string>
     <string name="vault_recovery_generate">ساخت کلید بازیابی</string>
     <string name="vault_recovery_key">کلید بازیابی</string>
+    <string name="vault_recovery_key_displayed">کلید بازیابی نمایش داده شده است. برای ذخیرهٔ امن از کپی استفاده کنید.</string>
     <string name="vault_recovery_reset">تغییر رمز اصلی با کلید بازیابی</string>
     <string name="vault_recovery_saved">کلید بازیابی را در جای امن ذخیره کردم</string>
     <string name="vault_recovery_save_note">کلید را خارج از Vaurivo ذخیره و در پایین تأیید کنید. هر کس کلید و فایل گاوصندوق را داشته باشد می‌تواند اطلاعات را بازیابی کند. سپس نسخهٔ پشتیبان جدید بسازید. نسخه‌های پشتیبان قدیمی دسترسی بازیابی قبلی را حفظ می‌کنند.</string>

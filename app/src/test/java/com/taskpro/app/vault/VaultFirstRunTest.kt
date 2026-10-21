@@ -72,7 +72,7 @@ class VaultFirstRunTest {
         compose.setContent { TaskProTheme(ThemeMode.LIGHT) {
             VaultScreen(repo, VaultClipboard(RuntimeEnvironment.getApplication()), {}, {})
         } }
-        compose.onNodeWithText("Create master password").performClick()
+        compose.onNodeWithText("Start a new empty vault").performClick()
         compose.onNodeWithText("New master password").performTextInput("synthetic next master")
         compose.onNodeWithText("Confirm password").performTextInput("synthetic next master")
         compose.onNode(hasText("Create master password") and hasClickAction()).performScrollTo().performClick()
@@ -93,7 +93,7 @@ class VaultFirstRunTest {
         compose.setContent { CompositionLocalProvider(LocalActivityResultRegistryOwner provides owner) {
             TaskProTheme(ThemeMode.LIGHT) { VaultScreen(repo, VaultClipboard(RuntimeEnvironment.getApplication()), {}, {}) }
         } }
-        compose.onNodeWithText("Create master password").performClick()
+        compose.onNodeWithText("Start a new empty vault").performClick()
         compose.onNodeWithText("New master password").performTextInput("synthetic next master")
         compose.onNodeWithText("Confirm password").performTextInput("synthetic next master")
         compose.onNode(hasText("Create master password") and hasClickAction()).performScrollTo().performClick()
