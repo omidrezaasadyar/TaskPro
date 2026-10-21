@@ -9,6 +9,14 @@
     <string name="vault_browse_hint">موردی مطابق این نما وجود ندارد.</string>
     <string name="vault_empty_hint">موارد ذخیره‌شده اینجا نمایش داده می‌شوند.</string>
     <string name="vault_reset_filters">پاک کردن فیلترها</string>
+    <string name="vault_subgroups_heading">زیرگروه‌ها</string>
+    <string name="vault_group_empty">این گروه خالی است</string>
+    <string name="vault_group_empty_hint">اینجا موردی اضافه کنید یا زیرگروه بسازید.</string>
+    <string name="vault_group_no_items">هنوز موردی در این گروه نیست</string>
+    <string name="vault_sign_in_details">اطلاعات ورود</string>
+    <string name="vault_account_details">اطلاعات حساب</string>
+    <string name="vault_record_tags">برچسب‌ها</string>
+    <string name="vault_detail_privacy">Vaurivo تلاش می‌کند پس از ۳۰ ثانیه محتوای تغییرنکردهٔ خود را از کلیپ‌بورد پاک کند. هنگام باز بودن گاوصندوق، تصویربرداری از صفحه محدود است.</string>
     <string name="vault_recovery_view">نمایش کلید ذخیره‌شده</string>
     <string name="vault_recovery_legacy">برای نمایش یا تولید کلید، رمز اصلی را وارد کنید. کلیدهای نسخه‌های قدیمی ممکن است برای نمایش نیاز به تولید مجدد داشته باشند. تولید کلید، کلید فعلی را جایگزین می‌کند اما دسترسی به نسخه‌های پشتیبان قدیمی را لغو نمی‌کند.</string>
     <string name="vault_total_groups">کل گروه‌ها</string>

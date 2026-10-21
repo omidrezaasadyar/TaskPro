@@ -45,7 +45,6 @@
     <string name="vault_copy">کپی</string>
     <string name="vault_copied">کپی شد. Vaurivo تلاش می‌کند پس از ۳۰ ثانیه محتوای تغییرنکردهٔ خود را از کلیپ‌بورد پاک کند.</string>
     <string name="vault_reveal">نمایش یا پنهان کردن</string>
-    <string name="vault_open_url">باز کردن وب‌سایت</string>
     <string name="vault_delete_record">این اطلاعات برای همیشه حذف شود؟</string>
     <string name="vault_delete_category">این دسته و زیر‌دسته‌ها حذف شوند؟ اطلاعات در بخش بدون دسته نگه داشته می‌شوند.</string>
     <string name="vault_empty">هنوز اطلاعاتی وجود ندارد</string>

@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +34,9 @@ import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -42,7 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.taskpro.app.R
 import com.taskpro.app.ui.screens.WorkspaceBackdrop
 import com.taskpro.app.vault.*
-import com.taskpro.app.ui.components.shared.rememberDisplaySession
+import com.taskpro.app.ui.components.shared.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import java.text.DateFormat
@@ -195,6 +199,11 @@ private fun VaultWorkspace(doc: VaultDocument, generation: Long, busy: Boolean, 
             current.copy(categories = current.categories.map { it.copy(position = positions[it.id] ?: it.position) })
         }
     }
+    fun toggleFavorite(id: String) = run {
+        edit { current -> current.copy(records = current.records.map {
+            if (it.id == id) it.copy(favorite = !it.favorite, modifiedAt = maxOf(System.currentTimeMillis(), it.createdAt)) else it
+        }) }
+    }
     val tree: @Composable () -> Unit = {
         CategoryTree(doc, category, collapsed, onSelect = { if (current()) { category = it; allRecords = it == null; drawer = false; selected = null } },
             onCollapse = { if (current()) collapsed = if (it in collapsed) collapsed - it else collapsed + it },
@@ -230,8 +239,7 @@ private fun VaultWorkspace(doc: VaultDocument, generation: Long, busy: Boolean, 
                         onCategories = { if (current()) drawer = true }, onNewGroup = ::newCategory,
                         onEditGroup = { if (current()) categoryEdit = it }, onDeleteGroup = { if (current()) deleteCategory = it.id },
                         onReorder = ::reorder, onRecord = { if (current()) selected = it },
-                        onFavorite = { id -> run { edit { current -> current.copy(records = current.records.map {
-                            if (it.id == id) it.copy(favorite = !it.favorite, modifiedAt = maxOf(System.currentTimeMillis(), it.createdAt)) else it }) } } },
+                        onFavorite = ::toggleFavorite,
                         onNewRecord = ::newRecord, onLock = { if (current()) repository.lock() },
                         onSecurity = { if (current()) security = true }, onSettings = { if (current()) { repository.lock(); onSettings() } },
                         onWorkspace = { if (current()) onWorkspace() }, searchModifier = Modifier.focusRequester(searchFocus),
@@ -240,16 +248,20 @@ private fun VaultWorkspace(doc: VaultDocument, generation: Long, busy: Boolean, 
                 }
                 if (wide && selected != null) {
                     doc.records.find { it.id == selected }?.let { record ->
-                        Box(Modifier.width(320.dp).fillMaxHeight()) { RecordDetails(record, doc, ::copy,
-                            { selected = null }, { editing = record }, { editing = record.copy(id = java.util.UUID.randomUUID().toString(), createdAt = System.currentTimeMillis(), modifiedAt = System.currentTimeMillis()) },
-                            { deleteRecord = record.id }) }
+                        Box(Modifier.width(320.dp).fillMaxHeight()) { RecordDetails(record, doc, ::current, ::copy,
+                            { selected = null }, ::toggleFavorite,
+                            { if (current()) editing = record }, { if (current()) editing = record.copy(id = java.util.UUID.randomUUID().toString(), createdAt = System.currentTimeMillis(), modifiedAt = System.currentTimeMillis()) },
+                            { if (current()) deleteRecord = record.id }) }
                     }
                 }
             }
             if (!wide && selected != null) doc.records.find { it.id == selected }?.let { record ->
                 Dialog(onDismissRequest = { selected = null }, properties = DialogProperties(usePlatformDefaultWidth = false, securePolicy = SecureFlagPolicy.SecureOn)) {
-                    Surface { RecordDetails(record, doc, ::copy, { selected = null }, { editing = record },
-                        { editing = record.copy(id = java.util.UUID.randomUUID().toString(), createdAt = System.currentTimeMillis(), modifiedAt = System.currentTimeMillis()) }, { deleteRecord = record.id }) }
+                    Surface(color = com.taskpro.app.ui.theme.LocalVaurivoColors.current.canvas) { RecordDetails(record, doc, ::current, ::copy, { selected = null },
+                        ::toggleFavorite,
+                        { if (current()) editing = record },
+                        { if (current()) editing = record.copy(id = java.util.UUID.randomUUID().toString(), createdAt = System.currentTimeMillis(), modifiedAt = System.currentTimeMillis()) },
+                        { if (current()) deleteRecord = record.id }) }
                 }
             }
         }
@@ -349,46 +361,98 @@ private fun CategoryTree(doc: VaultDocument, selected: String?, collapsed: Set<S
 }
 
 @Composable
-private fun RecordDetails(record: VaultRecord, doc: VaultDocument, copy: (String) -> Unit, close: () -> Unit,
+private fun RecordDetails(record: VaultRecord, doc: VaultDocument, authorized: () -> Boolean, copy: (String) -> Unit, close: () -> Unit,
+                          favorite: (String) -> Unit,
                           edit: () -> Unit, duplicate: () -> Unit, delete: () -> Unit) {
     val context = LocalContext.current
-    Column(Modifier.vaultActivity().fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row {
-            IconButton(onClick = close) { Icon(Icons.Default.Close, stringResource(R.string.back)) }
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = edit) { Icon(Icons.Default.Edit, stringResource(R.string.vault_edit)) }
-            IconButton(onClick = duplicate) { Icon(Icons.Default.ContentCopy, stringResource(R.string.vault_duplicate)) }
-            IconButton(onClick = delete) { Icon(Icons.Default.DeleteOutline, stringResource(R.string.delete)) }
+    val p = com.taskpro.app.ui.theme.LocalVaurivoColors.current
+    val group = doc.categories.find { it.id == record.categoryId }
+    var menu by remember(record.id) { mutableStateOf(false) }
+    val openWebsite: (String) -> Unit = { value ->
+        if (authorized() && VaultDocument.validUrl(value)) runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(value))) }.onFailure {
+            android.widget.Toast.makeText(context, R.string.vault_error, android.widget.Toast.LENGTH_LONG).show()
         }
-        Text(record.title, style = MaterialTheme.typography.titleLarge)
-        Text(categoryPath(record.categoryId, doc.categories), style = MaterialTheme.typography.labelMedium)
-        data class DetailField(val label: String, val value: String, val sensitive: Boolean, val isUrl: Boolean)
-        val fields = VaultDocument.STANDARD_FIELDS.map { key ->
-            DetailField(stringResource(fieldLabel(key)), record.values[key].orEmpty(), key == "password", key == "url")
-        } + record.custom.map { DetailField(it.label, it.value, it.secret, it.type == FieldType.URL) }
-        fields.forEachIndexed { index, (label, value, sensitive, isUrl) ->
-            if (value.isNotEmpty()) key(record.id, index, value) {
-                var reveal by remember { mutableStateOf(false) }
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(label, Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
-                        if (sensitive) IconButton(onClick = { reveal = !reveal }) { Icon(if (reveal) Icons.Default.VisibilityOff else Icons.Default.Visibility, stringResource(R.string.vault_reveal)) }
-                        IconButton(onClick = { copy(value) }) { Icon(Icons.Default.ContentCopy, stringResource(R.string.vault_copy)) }
-                        if (isUrl && !sensitive && VaultDocument.validUrl(value)) IconButton(onClick = {
-                            runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(value))) }.onFailure {
-                                android.widget.Toast.makeText(context, R.string.vault_error, android.widget.Toast.LENGTH_LONG).show()
-                            }
-                        }) { Icon(Icons.AutoMirrored.Filled.OpenInNew, stringResource(R.string.vault_open_url)) }
-                    }
-                    Text(if (sensitive && !reveal) "••••••••" else value,
-                        style = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Content))
-                    HorizontalDivider(Modifier.padding(top = 12.dp))
+    }
+    Column(Modifier.vaultActivity().fillMaxSize().background(p.canvas).verticalScroll(rememberScrollState())
+        .padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            IconAction(stringResource(R.string.back), Icons.AutoMirrored.Filled.ArrowBack, close, module = ModuleAccent.Vault)
+            Spacer(Modifier.weight(1f))
+            IconAction(stringResource(R.string.vault_favorite), if (record.favorite) Icons.Default.Star else Icons.Default.StarBorder,
+                { favorite(record.id) }, Modifier.semantics {
+                    stateDescription = context.getString(if (record.favorite) R.string.component_favorite else R.string.component_not_favorite)
+                }, module = ModuleAccent.Vault)
+            IconAction(stringResource(R.string.vault_edit), Icons.Default.Edit, edit, module = ModuleAccent.Vault)
+            Box {
+                IconAction(stringResource(R.string.menu), Icons.Default.MoreVert, { menu = true }, module = ModuleAccent.Vault)
+                DropdownMenu(menu, { menu = false }) {
+                    DropdownMenuItem(text = { Text(stringResource(R.string.vault_duplicate)) }, onClick = { menu = false; duplicate() })
+                    DropdownMenuItem(text = { Text(stringResource(R.string.delete)) }, onClick = { menu = false; delete() })
                 }
             }
         }
-        if (record.tags.isNotEmpty()) Text(record.tags.joinToString(" · "))
-        Text("${stringResource(R.string.vault_created)}: ${DateFormat.getDateTimeInstance().format(Date(record.createdAt))}", style = MaterialTheme.typography.bodySmall)
-        Text("${stringResource(R.string.vault_modified)}: ${DateFormat.getDateTimeInstance().format(Date(record.modifiedAt))}", style = MaterialTheme.typography.bodySmall)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            if (group != null) GroupIcon(group, size = 48.dp)
+            else Icon(Icons.Default.Key, null, Modifier.size(40.dp), tint = p.vaultAccent)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(record.title, Modifier.fillMaxWidth().semantics { heading() }, style = MaterialTheme.typography.titleLarge,
+                    color = p.textPrimary)
+                Text(categoryPath(record.categoryId, doc.categories).ifBlank { stringResource(R.string.vault_uncategorized) },
+                    Modifier.fillMaxWidth(), style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+            }
+        }
+        key(record.id) {
+            val sections = listOf(
+                R.string.vault_sign_in_details to listOf("username", "email", "password"),
+                R.string.vault_account_details to listOf("url", "phone", "reference"),
+                R.string.vault_notes to listOf("notes")
+            )
+            sections.forEach { (title, keys) ->
+                if (keys.any { !record.values[it].isNullOrEmpty() }) {
+                    SectionHeader(stringResource(title), module = ModuleAccent.Vault)
+                    keys.forEach { field ->
+                        val value = record.values[field].orEmpty()
+                        if (value.isNotEmpty()) key(field) {
+                            val type = when (field) {
+                                "password" -> FieldType.SECRET
+                                "url" -> FieldType.URL
+                                "email" -> FieldType.EMAIL
+                                "notes" -> FieldType.NOTES
+                                else -> FieldType.TEXT
+                            }
+                            SecureFieldCard(stringResource(fieldLabel(field)), value, field == "password", type,
+                                sessionKey = record.id, active = true, onCopy = copy,
+                                onOpen = if (type == FieldType.URL) openWebsite else null,
+                                technical = field != "notes")
+                        }
+                    }
+                }
+            }
+            if (record.custom.any { it.value.isNotEmpty() }) {
+                SectionHeader(stringResource(R.string.vault_custom), module = ModuleAccent.Vault)
+                record.custom.filter { it.value.isNotEmpty() }.forEach { field -> key(field.id) {
+                    SecureFieldCard(field.label, field.value, field.secret, field.type, sessionKey = record.id,
+                        active = true, onCopy = copy, onOpen = if (field.type == FieldType.URL && !field.secret) openWebsite else null,
+                        technical = field.type in listOf(FieldType.EMAIL, FieldType.NUMBER, FieldType.DATE))
+                } }
+            }
+        }
+        if (record.tags.isNotEmpty()) {
+            SectionHeader(stringResource(R.string.vault_record_tags), module = ModuleAccent.Vault)
+            Text(record.tags.joinToString(" · "), style = MaterialTheme.typography.bodyMedium, color = p.textSecondary)
+        }
+        HorizontalDivider(color = p.borderSubtle)
+        Text("${stringResource(R.string.vault_created)}: ${DateFormat.getDateTimeInstance().format(Date(record.createdAt))}",
+            style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+        Text("${stringResource(R.string.vault_modified)}: ${DateFormat.getDateTimeInstance().format(Date(record.modifiedAt))}",
+            style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+        Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Top) {
+            Icon(Icons.Default.Shield, null, Modifier.size(16.dp), tint = p.textSecondary)
+            Text(stringResource(R.string.vault_detail_privacy), Modifier.weight(1f),
+                style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+        }
     }
 }
 

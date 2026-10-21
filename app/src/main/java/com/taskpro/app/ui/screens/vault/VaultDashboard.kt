@@ -59,6 +59,9 @@ internal fun VaultDashboard(doc: VaultDocument, folders: List<VaultCategory>, re
     val activeFilters = favorites || tag.isNotBlank() || sort != 0
     val filterLabel = queryScopeLabel(tag, favorites, sort)
     val overviewTitle = stringResource(R.string.vault_overview)
+    val openedGroup = doc.categories.find { it.id == category }
+    val groupContents = openedGroup != null && query.isBlank()
+    val groupPaneTitle = if (groupContents) categoryPath(openedGroup!!.id, doc.categories) else overviewTitle
     val listState = rememberLazyListState()
     LaunchedEffect(searchRequest) {
         if (searchRequest > 0) { listState.scrollToItem(1); withFrameNanos { }; onSearchReady() }
@@ -100,24 +103,34 @@ internal fun VaultDashboard(doc: VaultDocument, folders: List<VaultCategory>, re
                 item { DashboardSearch(query, onQuery, searchModifier) }
                 if (activeFilters) item { Text(queryScopeLabel(tag, favorites, sort), style = MaterialTheme.typography.bodySmall, color = p.textSecondary) }
                 if (category != null || allRecords || query.isNotBlank()) item {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         IconAction(stringResource(R.string.back), Icons.Default.ArrowUpward, onParent, module = ModuleAccent.Vault)
+                        if (groupContents) GroupIcon(openedGroup!!, size = 40.dp)
                         Text(when {
                             query.isNotBlank() -> stringResource(R.string.vault_search_all)
                             category == "" -> stringResource(R.string.vault_uncategorized)
                             category == null -> stringResource(R.string.vault_all)
                             else -> categoryPath(category, doc.categories)
-                        }, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleSmall, color = p.textSecondary)
+                        }, Modifier.weight(1f).semantics { heading() },
+                            style = if (groupContents) MaterialTheme.typography.titleLarge else MaterialTheme.typography.titleSmall,
+                            color = p.textPrimary)
                     }
+                    if (groupContents) Text(stringResource(R.string.vault_folder_count,
+                        doc.records.count { it.categoryId == category }, doc.categories.count { it.parentId == category }),
+                        Modifier.padding(start = 56.dp, bottom = 8.dp), style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
                 }
                 item {
-                    Column(Modifier.semantics { paneTitle = overviewTitle }) {
-                        SectionHeader(stringResource(R.string.vault_groups_heading), actionLabel = stringResource(R.string.vault_new_group_label),
+                    Column(Modifier.semantics { paneTitle = groupPaneTitle }) {
+                        SectionHeader(stringResource(if (groupContents) R.string.vault_subgroups_heading else R.string.vault_groups_heading),
+                            actionLabel = stringResource(R.string.vault_new_group_label),
                             onAction = onNewGroup, enabled = !busy, module = ModuleAccent.Vault)
-                        val accessibleCounts = "${doc.categories.size} ${stringResource(R.string.vault_total_groups)}, ${doc.records.size} ${stringResource(R.string.vault_total_items)}"
-                        Text("${pluralStringResource(R.plurals.vault_group_total, doc.categories.size, doc.categories.size)} · ${pluralStringResource(R.plurals.vault_item_total, doc.records.size, doc.records.size)}",
-                            Modifier.semantics { contentDescription = accessibleCounts },
-                            style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+                        if (!groupContents) {
+                            val accessibleCounts = "${doc.categories.size} ${stringResource(R.string.vault_total_groups)}, ${doc.records.size} ${stringResource(R.string.vault_total_items)}"
+                            Text("${pluralStringResource(R.plurals.vault_group_total, doc.categories.size, doc.categories.size)} · ${pluralStringResource(R.plurals.vault_item_total, doc.records.size, doc.records.size)}",
+                                Modifier.semantics { contentDescription = accessibleCounts },
+                                style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+                        }
                     }
                 }
                 items(folders.chunked(columns), key = { row -> "folders:${row.first().id}" }) { row ->
@@ -152,8 +165,17 @@ internal fun VaultDashboard(doc: VaultDocument, folders: List<VaultCategory>, re
                     actionLabel = stringResource(R.string.vault_all), onAction = onAll, module = ModuleAccent.Vault) }
                 if (remaining.isEmpty() && preview.isEmpty()) item {
                     val unfilteredEmpty = query.isBlank() && !activeFilters
-                    EmptyState(stringResource(if (unfilteredEmpty) R.string.vault_empty else R.string.vault_no_results),
-                        stringResource(if (unfilteredEmpty) R.string.vault_empty_hint else R.string.vault_browse_hint),
+                    val emptyGroup = groupContents && folders.isEmpty() && unfilteredEmpty
+                    EmptyState(stringResource(when {
+                        emptyGroup -> R.string.vault_group_empty
+                        groupContents && unfilteredEmpty -> R.string.vault_group_no_items
+                        unfilteredEmpty -> R.string.vault_empty
+                        else -> R.string.vault_no_results
+                    }), stringResource(when {
+                        emptyGroup -> R.string.vault_group_empty_hint
+                        unfilteredEmpty -> R.string.vault_empty_hint
+                        else -> R.string.vault_browse_hint
+                    }),
                         Icons.Default.FolderOpen, module = ModuleAccent.Vault)
                 }
                 items(remaining, key = { it.id }) { record -> DashboardRecord(record, doc, onRecord, onFavorite, busy) }

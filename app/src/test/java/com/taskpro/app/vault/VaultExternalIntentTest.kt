@@ -45,14 +45,14 @@ class VaultExternalIntentTest {
     }
 
     private fun assertNoExternalAction() {
-        compose.onAllNodesWithContentDescription("Open website").assertCountEquals(0)
+        compose.onAllNodes(hasContentDescription("Open ", substring = true)).assertCountEquals(0)
         assertNull(shadowOf(compose.activity).nextStartedActivity)
     }
 
     @Test fun standardWebsiteOpensOnlyViewIntentWithoutChangingVault() {
         openRecord(values = mapOf("url" to sampleUrl))
         val before = runBlocking { db.vaultDao().get() }
-        compose.onNodeWithContentDescription("Open website").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Open Website URL").performScrollTo().performClick()
         val intent = checkNotNull(shadowOf(compose.activity).nextStartedActivity)
         assertEquals(Intent.ACTION_VIEW, intent.action)
         assertEquals(sampleUrl, intent.dataString)
@@ -64,7 +64,7 @@ class VaultExternalIntentTest {
     @Test fun nonSensitiveCustomUrlAllowsHttpWebsiteOpening() {
         val url = "http://synthetic.example.invalid/login"
         openRecord(custom = listOf(CustomField(label = "Public website", value = url, type = FieldType.URL)))
-        compose.onNodeWithContentDescription("Open website").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Open Public website").performScrollTo().performClick()
         val intent = checkNotNull(shadowOf(compose.activity).nextStartedActivity)
         assertEquals(Intent.ACTION_VIEW, intent.action)
         assertEquals(url, intent.dataString)
@@ -74,14 +74,15 @@ class VaultExternalIntentTest {
         openRecord(values = mapOf("password" to sampleUrl))
         compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertNoExternalAction()
-        compose.onNodeWithContentDescription("Show or hide value").performScrollTo().performClick()
-        compose.onNodeWithText(sampleUrl).assertExists()
+        compose.onNodeWithContentDescription("Show Password").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Password, Revealed visually").assertExists()
+        compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertNoExternalAction()
-        compose.onNodeWithContentDescription("Copy").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Copy Password").performScrollTo().performClick()
         val manager = compose.activity.getSystemService(ClipboardManager::class.java)
         compose.runOnIdle { assertEquals(sampleUrl, manager.primaryClip!!.getItemAt(0).text.toString()) }
         assertNoExternalAction()
-        compose.onNodeWithContentDescription("Show or hide value").performClick()
+        compose.onNodeWithContentDescription("Hide Password").performClick()
         compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertTrue(compose.activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE != 0)
         compose.onNodeWithContentDescription("Back").performClick()
@@ -97,8 +98,9 @@ class VaultExternalIntentTest {
         openRecord(custom = listOf(CustomField(label = "Sensitive URL", value = sampleUrl, type = FieldType.URL, sensitive = true)))
         compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertNoExternalAction()
-        compose.onNodeWithContentDescription("Show or hide value").performScrollTo().performClick()
-        compose.onNodeWithText(sampleUrl).assertExists()
+        compose.onNodeWithContentDescription("Show Sensitive URL").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Sensitive URL, Revealed visually").assertExists()
+        compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertNoExternalAction()
     }
 
@@ -106,8 +108,9 @@ class VaultExternalIntentTest {
         openRecord(custom = listOf(CustomField(label = "Secret value", value = sampleUrl, type = FieldType.SECRET, sensitive = false)))
         compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertNoExternalAction()
-        compose.onNodeWithContentDescription("Show or hide value").performScrollTo().performClick()
-        compose.onNodeWithText(sampleUrl).assertExists()
+        compose.onNodeWithContentDescription("Show Secret value").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Secret value, Revealed visually").assertExists()
+        compose.onNodeWithText(sampleUrl).assertDoesNotExist()
         assertNoExternalAction()
     }
 

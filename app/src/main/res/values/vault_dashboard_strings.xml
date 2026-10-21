@@ -9,6 +9,14 @@
     <string name="vault_browse_hint">Nothing matches this view.</string>
     <string name="vault_empty_hint">Saved items will appear here.</string>
     <string name="vault_reset_filters">Reset filters</string>
+    <string name="vault_subgroups_heading">Subgroups</string>
+    <string name="vault_group_empty">This group is empty</string>
+    <string name="vault_group_empty_hint">Add an item or create a subgroup here.</string>
+    <string name="vault_group_no_items">No items in this group yet</string>
+    <string name="vault_sign_in_details">Sign-in details</string>
+    <string name="vault_account_details">Account details</string>
+    <string name="vault_record_tags">Tags</string>
+    <string name="vault_detail_privacy">Vaurivo tries to clear its unchanged clipboard entry after 30 seconds. Screen capture is restricted while Vault is open.</string>
     <plurals name="vault_group_total">
         <item quantity="one">%d group</item>
         <item quantity="other">%d groups</item>
