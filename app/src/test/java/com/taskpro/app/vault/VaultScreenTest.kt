@@ -95,12 +95,12 @@ class VaultScreenTest {
         screen()
         compose.onNodeWithText("Add Item").performClick()
         compose.onNodeWithText("Record title").performTextInput("New account")
-        compose.onNodeWithContentDescription("Save").performClick()
+        compose.onNodeWithText("Save to Vault").performClick()
         compose.waitUntil(10_000) { repo.state.value.document!!.records.size == 2 }
         val id = repo.state.value.document!!.records.single { it.title == "New account" }.id
         compose.onAllNodesWithContentDescription("Edit").onLast().performClick()
         compose.onNodeWithText("Record title").performTextReplacement("Updated account")
-        compose.onNodeWithContentDescription("Save").performClick()
+        compose.onNodeWithText("Save to Vault").performClick()
         compose.waitUntil(10_000) { repo.state.value.document!!.records.any { it.id == id && it.title == "Updated account" } }
         assertEquals(2, repo.state.value.document!!.records.size)
     }

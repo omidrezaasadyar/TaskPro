@@ -110,7 +110,7 @@ class VaultGroupDetailTest {
         assertEquals(1, repo.state.value.document!!.records.size)
         compose.onNodeWithContentDescription("Edit").performClick()
         compose.onNodeWithText("Record title").performTextReplacement("Renamed account")
-        compose.onNodeWithContentDescription("Save").performClick()
+        compose.onNodeWithText("Save to Vault").performClick()
         compose.waitUntil(10_000) { repo.state.value.document!!.records.single().title == "Renamed account" }
         assertEquals(record.id, repo.state.value.document!!.records.single().id)
         assertTrue(repo.state.value.document!!.records.single().favorite)

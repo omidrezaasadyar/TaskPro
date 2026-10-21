@@ -15,6 +15,10 @@
     <string name="vault_group_no_items">No items in this group yet</string>
     <string name="vault_sign_in_details">Sign-in details</string>
     <string name="vault_account_details">Account details</string>
+    <string name="vault_item_details">Item details</string>
+    <string name="vault_organization">Organization</string>
+    <string name="vault_edit_item">Edit Item</string>
+    <string name="vault_save_item">Save to Vault</string>
     <string name="vault_record_tags">Tags</string>
     <string name="vault_detail_privacy">Vaurivo tries to clear its unchanged clipboard entry after 30 seconds. Screen capture is restricted while Vault is open.</string>
     <plurals name="vault_group_total">

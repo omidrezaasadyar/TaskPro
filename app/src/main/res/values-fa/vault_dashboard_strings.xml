@@ -15,6 +15,10 @@
     <string name="vault_group_no_items">هنوز موردی در این گروه نیست</string>
     <string name="vault_sign_in_details">اطلاعات ورود</string>
     <string name="vault_account_details">اطلاعات حساب</string>
+    <string name="vault_item_details">جزئیات مورد</string>
+    <string name="vault_organization">سازمان‌دهی</string>
+    <string name="vault_edit_item">ویرایش مورد</string>
+    <string name="vault_save_item">ذخیره در گاوصندوق</string>
     <string name="vault_record_tags">برچسب‌ها</string>
     <string name="vault_detail_privacy">Vaurivo تلاش می‌کند پس از ۳۰ ثانیه محتوای تغییرنکردهٔ خود را از کلیپ‌بورد پاک کند. هنگام باز بودن گاوصندوق، تصویربرداری از صفحه محدود است.</string>
     <string name="vault_recovery_view">نمایش کلید ذخیره‌شده</string>

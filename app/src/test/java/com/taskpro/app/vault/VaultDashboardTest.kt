@@ -119,7 +119,7 @@ class VaultDashboardTest {
         screen(); folder("Banks").performClick(); folder("Savings").performScrollTo().performClick()
         button("Add Item").performClick()
         compose.onNodeWithText("Record title").performTextInput("New nested account")
-        compose.onNodeWithContentDescription("Save").performClick()
+        compose.onNodeWithText("Save to Vault").performClick()
         waitFor { repo.state.value.document!!.records.size == 6 }
         assertEquals(VaultDashboardFixtures.id("savings"), repo.state.value.document!!.records.single { it.title == "New nested account" }.categoryId)
     }

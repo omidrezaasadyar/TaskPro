@@ -2,6 +2,7 @@ package com.taskpro.app.ui.components.shared
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -81,8 +82,9 @@ fun SecureInputField(label: String, value: String, onValueChange: (String) -> Un
                     onClick { if (binding.matches(sessionKey)) { focus.requestFocus(); true } else false }
                 }
             } else Modifier
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(editor, { update(it) }, enabled = available, readOnly = readOnly, label = { Text(label) },
-                modifier = Modifier.fillMaxWidth().heightIn(min = VaurivoLayout.primaryActionHeight).then(redacted)
+                modifier = Modifier.weight(1f).heightIn(min = VaurivoLayout.primaryActionHeight).then(redacted)
                     .onFocusChanged { hasFocus = it.isFocused }.focusRequester(focus),
                 shape = VaurivoShapes.control, isError = error != null, singleLine = type != FieldType.NOTES,
                 minLines = if (type == FieldType.NOTES) 3 else 1,
@@ -101,6 +103,7 @@ fun SecureInputField(label: String, value: String, onValueChange: (String) -> Un
             if (secret) IconAction(stringResource(if (revealed) R.string.component_hide else R.string.component_show, label),
                 if (revealed) Icons.Default.VisibilityOff else Icons.Default.Visibility, { if (binding.matches(sessionKey)) revealed = !revealed },
                 enabled = available, module = ModuleAccent.Vault)
+            }
             if (error != null) ErrorState(error)
         }
     }

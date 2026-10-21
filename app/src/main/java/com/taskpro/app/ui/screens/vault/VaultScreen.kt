@@ -278,7 +278,7 @@ private fun VaultWorkspace(doc: VaultDocument, generation: Long, busy: Boolean, 
             Surface(Modifier.vaultActivity().size(panelWidth, panelHeight), shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)) { tree() }
         }
     }
-    editing?.let { record -> RecordEditor(record, doc, busy, { editing = null }) { updated -> run {
+    editing?.let { record -> RecordEditor(record, doc, busy, { editing = null }, generation) { updated -> run {
         edit { it.copy(records = it.records.filterNot { r -> r.id == updated.id } + updated) }; editing = null; selected = updated.id
     } } }
     categoryEdit?.let { initial -> CategoryEditor(initial, doc.categories, { categoryEdit = null }) { updated -> run {
