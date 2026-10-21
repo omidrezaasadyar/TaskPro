@@ -11,6 +11,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TaskDao {
 
+    @Query("SELECT * FROM tasks ORDER BY id")
+    suspend fun getAll(): List<Task>
+
+    /** Read-only dashboard projection; item joins also invalidate when a group is renamed. */
+    @Query("SELECT tasks.*, items.name AS itemName FROM tasks JOIN items ON tasks.itemId = items.id ORDER BY tasks.id")
+    fun observeDashboardTasks(): Flow<List<TaskWithItemName>>
+
+    @Insert
+    suspend fun insertAll(tasks: List<Task>)
+
     /** All tasks for an item in a given status, ordered by manual priority. */
     @Query("SELECT * FROM tasks WHERE itemId = :itemId AND status = :status ORDER BY position ASC")
     fun observeTasks(itemId: Long, status: TaskStatus): Flow<List<Task>>
@@ -39,7 +49,7 @@ interface TaskDao {
     suspend fun getById(id: Long): Task?
 
     /** All tasks that still have a future reminder — used to re-arm alarms on boot. */
-    @Query("SELECT * FROM tasks WHERE dueAt IS NOT NULL AND status = 'PENDING'")
+    @Query("SELECT * FROM tasks WHERE dueAt IS NOT NULL AND status IN ('PENDING', 'SNOOZED')")
     suspend fun getTasksWithReminders(): List<Task>
 
     @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM tasks WHERE itemId = :itemId AND status = :status")
@@ -59,6 +69,18 @@ interface TaskDao {
 
     @Transaction
     suspend fun reorder(tasks: List<Task>) {
-        updateAll(tasks.mapIndexed { index, task -> task.copy(position = index) })
+        tasks.forEachIndexed { index, task -> updatePendingPosition(task.id, task.itemId, index) }
+    }
+
+    @Query("UPDATE tasks SET position = :position WHERE id = :id AND itemId = :itemId AND status = 'PENDING'")
+    suspend fun updatePendingPosition(id: Long, itemId: Long, position: Int)
+
+    @Transaction
+    suspend fun editPendingTask(id: Long, title: String, notes: String, dueAt: Long?): Task {
+        val current = checkNotNull(getById(id))
+        check(current.status == TaskStatus.PENDING)
+        val updated = current.copy(title = title, notes = notes, dueAt = dueAt)
+        update(updated)
+        return updated
     }
 }

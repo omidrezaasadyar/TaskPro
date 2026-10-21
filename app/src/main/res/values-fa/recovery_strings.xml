@@ -1,0 +1,18 @@
+<resources>
+    <string name="vault_use_recovery">استفاده از کلید بازیابی ذخیره‌شده</string>
+    <string name="vault_login_subtitle">فضای خصوصی شما، محافظت‌شده.</string>
+    <string name="vault_forgot">رمز عبور را فراموش کرده‌اید؟</string>
+    <string name="vault_recovery_title">بازیابی گاوصندوق</string>
+    <string name="vault_recovery_setup">مدیریت کلید بازیابی</string>
+    <string name="vault_recovery_generate">ساخت کلید بازیابی</string>
+    <string name="vault_recovery_key">کلید بازیابی</string>
+    <string name="vault_recovery_reset">تغییر رمز اصلی با کلید بازیابی</string>
+    <string name="vault_recovery_saved">کلید بازیابی را در جای امن ذخیره کردم</string>
+    <string name="vault_recovery_save_note">کلید را خارج از Vaurivo ذخیره و در پایین تأیید کنید. هر کس کلید و فایل گاوصندوق را داشته باشد می‌تواند اطلاعات را بازیابی کند. سپس نسخهٔ پشتیبان جدید بسازید. نسخه‌های پشتیبان قدیمی دسترسی بازیابی قبلی را حفظ می‌کنند.</string>
+    <string name="vault_recovery_help">کلیدی را وارد کنید که قبلاً هنگام باز بودن گاوصندوق ذخیره کرده‌اید. اطلاعات شما حفظ می‌شود. اگر بازیابی را تنظیم نکرده‌اید یا هم کلید و هم رمز را گم کرده‌اید، بازیابی ممکن نیست. بازنشانی ایمیلی یا راه دور زدن رمز وجود ندارد.</string>
+    <string name="vault_recovery_success">رمز تغییر کرد. با رمز جدید وارد شوید؛ سپس کلید بازیابی و نسخهٔ پشتیبان جدید بسازید.</string>
+    <string name="vault_recovery_error">بازیابی انجام نشد. کلید ذخیره‌شده را بررسی کنید. کلید باید قبلاً برای همین گاوصندوق تنظیم شده باشد.</string>
+    <string name="vault_password_rule">حداقل ۱۲ نویسه وارد کنید و همان رمز را تأیید کنید.</string>
+    <string name="vault_password_mismatch">رمزهای واردشده یکسان نیستند.</string>
+    <string name="vault_version">Vaurivo | v%1$s</string>
+</resources>

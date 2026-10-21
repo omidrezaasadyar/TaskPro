@@ -35,6 +35,8 @@ import com.taskpro.app.data.TaskStatus
 import com.taskpro.app.ui.AppViewModelProvider
 import com.taskpro.app.ui.components.GradientBackground
 import com.taskpro.app.ui.components.TaskCard
+import com.taskpro.app.ui.screens.tasks.ManagedTaskRow
+import com.taskpro.app.ui.screens.tasks.taskMetadata
 import com.taskpro.app.ui.theme.StatusCompleted
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +56,7 @@ fun ItemStatusListScreen(
     )
 
     Scaffold(
-        containerColor = Color.Transparent,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
@@ -70,7 +72,7 @@ fun ItemStatusListScreen(
             )
         }
     ) { padding ->
-        GradientBackground {
+        Box(Modifier.fillMaxSize()) {
         if (tasks.isEmpty()) {
             Box(
                 Modifier
@@ -89,30 +91,9 @@ fun ItemStatusListScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(tasks, key = { it.id }) { task ->
-                    TaskCard(task = task) {
-                        Row {
-                            // Snoozed items can be completed directly from here.
-                            if (viewModel.status == TaskStatus.SNOOZED) {
-                                IconButton(onClick = { viewModel.complete(task) }) {
-                                    Icon(
-                                        Icons.Default.Check,
-                                        stringResource(R.string.mark_complete),
-                                        tint = StatusCompleted
-                                    )
-                                }
-                            }
-                            IconButton(onClick = { viewModel.reopen(task) }) {
-                                Icon(Icons.Default.Undo, stringResource(R.string.reopen))
-                            }
-                            IconButton(onClick = { viewModel.delete(task) }) {
-                                Icon(
-                                    Icons.Default.DeleteOutline,
-                                    stringResource(R.string.delete),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        }
-                    }
+                    ManagedTaskRow(task, taskMetadata(item?.name.orEmpty(), task.dueAt), onEdit = null,
+                        onStatus = { status -> if (status == TaskStatus.COMPLETED) viewModel.complete(task) else viewModel.reopen(task) },
+                        onDelete = { viewModel.delete(task) })
                 }
             }
         }

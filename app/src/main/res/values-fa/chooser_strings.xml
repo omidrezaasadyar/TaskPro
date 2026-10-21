@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chooser_day">روز شما،\u0020</string>
+    <string name="chooser_organized">منظم.</string>
+    <string name="chooser_logins">ورود شما،\u0020</string>
+    <string name="chooser_secured">امن.</string>
+    <string name="chooser_description">کارها، یادداشت‌ها، یادآوری‌ها و گاوصندوق رمزگذاری‌شده؛ همه در یک برنامهٔ خصوصی.</string>
+    <string name="chooser_tasks_subtitle">دسترسی فوری</string>
+    <string name="chooser_vault_subtitle">دسترسی امن</string>
+    <string name="chooser_version">v%1$s</string>
+    <string name="chooser_build">v%1$s (%2$d)</string>
+</resources>

@@ -1,0 +1,25 @@
+<resources>
+    <string name="vault_use_recovery">Use a saved recovery key</string>
+    <string name="vault_login_subtitle">Your private workspace, protected.</string>
+    <string name="vault_forgot">Forgot Password?</string>
+    <string name="vault_recovery_title">Recover your vault</string>
+    <string name="vault_recovery_setup">Recovery Key Management</string>
+    <string name="vault_recovery_generate">Generate recovery key</string>
+    <string name="vault_recovery_key">Recovery key</string>
+    <string name="vault_recovery_reset">Reset master password</string>
+    <string name="vault_recovery_saved">I have saved my recovery key safely</string>
+    <string name="vault_recovery_save_note">Save this key outside Vaurivo and confirm below. Anyone with this key and your vault file can recover your data. Create a new backup after setup. Older backups retain their previous recovery access.</string>
+    <string name="vault_recovery_view">View saved key</string>
+    <string name="vault_recovery_legacy">Authenticate to view or generate a key. Keys created by older versions may need regeneration before they can be viewed. Generating a key replaces the current key, but does not revoke access to older backups.</string>
+    <string name="vault_total_groups">Total Groups</string>
+    <string name="vault_total_items">Total Saved Items</string>
+    <string name="vault_add_item">Add Item</string>
+    <string name="vault_filters">Filters and sorting</string>
+    <string name="vault_folder_count">Items: %1$d · Subgroups: %2$d</string>
+    <string name="vault_recovery_help">Enter the recovery key you previously saved while your vault was unlocked. Your records will be preserved. If you never set up recovery, or lost both your key and password, this vault cannot be recovered. There is no email reset or bypass.</string>
+    <string name="vault_recovery_success">Password reset. Unlock with your new password, then set up a new recovery key and create a new backup.</string>
+    <string name="vault_recovery_error">Recovery failed. Check the saved recovery key and try again. A key must have been set up for this vault beforehand.</string>
+    <string name="vault_password_rule">Use at least 12 characters and confirm the same password.</string>
+    <string name="vault_password_mismatch">Passwords do not match.</string>
+    <string name="vault_version">Vaurivo | v%1$s</string>
+</resources>

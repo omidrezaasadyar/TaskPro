@@ -1,6 +1,30 @@
-# TaskPro — تسک‌پرو
+# Vaurivo
 
-A clean, modern Android **task manager** built with Kotlin and Jetpack Compose.
+A productivity workspace for Android with **Tasks** and an encrypted **Vault**, built with Kotlin and Jetpack Compose.
+
+## Version 2.0 Workspace
+
+Vaurivo includes a Tasks / Vault workspace selector, encrypted
+credential records and categories, master-password locking, and full or selective
+encrypted backups. Existing task data is retained through additive migrations.
+See [Vault and backup documentation](SECURE_VAULT.md) for usage, encryption,
+compatibility, tests, and release security considerations. Debug APKs are for
+testing with synthetic data, not real credentials.
+
+Vaurivo is the public name of the existing TaskPro application. The Android ID,
+database, encryption and backup formats retain their original identifiers so
+existing data remains compatible. Current launcher artwork is retained pending
+logo approval. See [Phase 03 report](docs/phase03/REPORT.md) for validation and
+remaining release gates. No installed-update signing continuity is claimed.
+
+Vaurivo شامل دو بخش کارها و گاوصندوق است. نام برنامه در فارسی نیز Vaurivo است؛
+شناسه‌های داخلی و قالب‌های ذخیره‌سازی قبلی برای سازگاری حفظ شده‌اند.
+
+Version 2.0.1 refreshes the welcome and vault login screens and adds optional offline
+recovery keys. Configure recovery from Vault security while unlocked and save the
+key outside the app. Forgot Password? can then reset the master password without
+deleting records. Recovery also works during encrypted backup restore; the separate
+backup password is still required. See the security documentation before use.
 
 Manage to-dos grouped by *items* (e.g. an Omani company, an English company,
 your Iranian company, or just yourself). Each item holds a colour-coded,

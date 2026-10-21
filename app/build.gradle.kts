@@ -13,8 +13,8 @@ android {
         applicationId = "com.taskpro.app"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.3.0"
+        versionCode = 9
+        versionName = "2.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -47,9 +47,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
+    implementation("androidx.biometric:biometric:1.1.0")
+    constraints {
+        implementation("androidx.fragment:fragment:1.8.9") {
+            because("BiometricPrompt's FragmentActivity must support the existing Activity Result permission API")
+        }
+    }
+    implementation(libs.bcprov)
+    implementation(libs.zxcvbn)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -73,4 +84,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.junit)
+    testImplementation(libs.json)
+    testImplementation(libs.robolectric)
 }

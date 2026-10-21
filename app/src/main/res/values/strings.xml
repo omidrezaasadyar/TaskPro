@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TaskPro</string>
+    <string name="app_name">Vaurivo</string>
     <string name="drawer_subtitle">Manage your to-dos</string>
 
     <!-- Menu / navigation -->
@@ -67,7 +67,30 @@
     <string name="background_plain">Plain</string>
     <string name="background_gradient">Soft gradient</string>
     <string name="background_aurora">Aurora</string>
-    <string name="settings_about">TaskPro — a simple, colourful task manager. Done = green, pending = red, snoozed = orange.</string>
+    <string name="settings_about">Vaurivo brings Tasks and Vault together: manage tasks, notes, and reminders, and protect private records in an encrypted vault.</string>
+
+    <string name="backup_restore">Backup &amp; Restore</string>
+    <string name="backup_create">Create Backup</string>
+    <string name="backup_restore_action">Restore Backup</string>
+    <string name="backup_share">Share Backup</string>
+    <string name="backup_share_label">Vaurivo backup</string>
+    <string name="backup_last">Last Backup: %1$s</string>
+    <string name="backup_never">Never</string>
+    <string name="backup_storage_note">Save the backup in Documents, Downloads, or cloud storage so it survives uninstalling Vaurivo. This legacy task backup contains your notes and is not encrypted; keep it private.</string>
+    <string name="backup_confirm">Replace all current groups, tasks, and app preferences with this backup? This cannot be undone. Create a backup first to keep your current data.\n\nGroups: %1$d\nTasks: %2$d\nCreated: %3$s\nVaurivo version: %4$s\n\nFuture reminders will be rescheduled. Device notification and alarm permissions are managed separately by Android.</string>
+    <string name="backup_replace">Replace and Restore</string>
+    <string name="backup_success">Backup saved successfully. You can now share it or copy the saved file to another device.</string>
+    <string name="backup_restore_success">Backup restored successfully. Your tasks, groups, preferences, and future reminders have been restored.</string>
+    <string name="backup_invalid">This is not a valid Vaurivo legacy task backup, is damaged, or exceeds the 20 MB limit. Your current data has not been changed.</string>
+    <string name="backup_unsupported">This backup uses an unsupported format version. Update Vaurivo before restoring it. Your current data has not been changed.</string>
+    <string name="backup_read_error">Could not read the backup. Check that the file is available and try again. Your current data has not been changed.</string>
+    <string name="backup_write_error">Could not finish saving the backup. Check available space and access to the destination, then create a new backup. Do not rely on a partially saved file.</string>
+    <string name="backup_restore_error">Restore failed. Your current database has not been replaced. Check available storage and try again.</string>
+    <string name="backup_recovery_error">Vaurivo could not finish preparing your data. If a restore was interrupted, its saved recovery record will finish applying preferences and reminders. Check available storage and retry.</string>
+    <string name="backup_share_error">Could not share the backup. You can copy or share the saved file from your device file manager.</string>
+    <string name="backup_picker_error">Could not open the Android file picker. Check that a document provider is available on this device.</string>
+    <string name="backup_working">Preparing your data…</string>
+    <string name="backup_retry">Retry</string>
 
     <!-- About section -->
     <string name="about">About</string>

@@ -18,6 +18,7 @@ class BootReceiver : BroadcastReceiver() {
         val pending = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                app.container.backupRepository.recover()
                 app.container.taskRepository.rescheduleAll()
             } finally {
                 pending.finish()

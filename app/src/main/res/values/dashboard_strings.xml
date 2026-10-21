@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_morning">Good morning</string>
+    <string name="dashboard_afternoon">Good afternoon</string>
+    <string name="dashboard_evening">Good evening</string>
+    <string name="dashboard_search">Search tasks</string>
+    <string name="dashboard_results">Task results</string>
+    <string name="dashboard_no_results">No matching tasks</string>
+    <string name="dashboard_search_hint">No task titles or notes match your search.</string>
+    <string name="dashboard_search_error">Could not search tasks.</string>
+    <string name="dashboard_loading">Loading tasks</string>
+    <string name="dashboard_error">Could not load task information.</string>
+    <string name="dashboard_retry">Retry</string>
+    <string name="dashboard_workspaces">Workspaces</string>
+    <string name="dashboard_up_next">Up Next</string>
+    <string name="dashboard_active">Active tasks: %1$s</string>
+    <string name="dashboard_open_vault">Open Vault</string>
+    <string name="dashboard_scheduled">Scheduled today</string>
+    <string name="dashboard_none_scheduled">No tasks scheduled today</string>
+    <string name="dashboard_progress">%1$s · %2$s complete</string>
+    <string name="dashboard_overdue">Overdue: %1$s</string>
+    <string name="dashboard_future">Upcoming: %1$s</string>
+    <string name="dashboard_no_upcoming">No upcoming tasks</string>
+    <string name="dashboard_no_upcoming_hint">No unfinished tasks have a future due date.</string>
+    <string name="dashboard_undated">No due date</string>
+</resources>

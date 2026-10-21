@@ -1,0 +1,34 @@
+<resources>
+    <string name="unlock_create_master">Create master password</string>
+    <string name="unlock_existing_vault_note">An encrypted vault is already stored on this device. Creating a master password here starts a new empty vault after saving an encrypted copy of the previous one. To keep using that vault, cancel and unlock it or use its recovery key.</string>
+    <string name="unlock_create_confirm_title">Create a new empty vault?</string>
+    <string name="unlock_create_confirm_text">First choose where to save an encrypted backup of the existing vault. Its backup-file password will be the new master password you just entered. Opening the old vault data still requires its original master password or recovery key. After the backup is saved and verified, a new empty vault will become active. Tasks data and settings will not change. Canceling or a failed backup leaves the current vault unchanged.</string>
+    <string name="unlock_save_previous">Save backup and create vault</string>
+    <string name="unlock_create_error">Could not finish setup. Check available storage, then cancel and reopen Vault. Keep any backup file that was saved.</string>
+    <string name="unlock_vault">Vault</string>
+    <string name="unlock_locked">Vault is locked</string>
+    <string name="unlock_timeout">Auto-locks after 1 min away</string>
+    <string name="unlock_touch">Touch the sensor to unlock</string>
+    <string name="unlock_another">or unlock another way</string>
+    <string name="unlock_pin">Use PIN</string>
+    <string name="unlock_master">Master password</string>
+    <string name="unlock_title">Unlock Vault</string>
+    <string name="unlock_fingerprint">Unlock with fingerprint</string>
+    <string name="unlock_settings">Unlock settings</string>
+    <string name="unlock_device_error">Unable to use device unlock. Use your master password, or set up device unlock again.</string>
+    <string name="unlock_existing_master">Existing master password</string>
+    <string name="unlock_master_error">Master password could not be verified. Enter the existing password that unlocks your vault. This screen does not create a new master password. (DU01)</string>
+    <string name="unlock_pin_setup_error">PIN protection could not be created. Your vault and previous PIN have not been changed. Use your master password. (DU02)</string>
+    <string name="unlock_keystore_error">Android secure key storage could not complete device unlock. Restart your phone and try again, or use your master password. (DU03)</string>
+    <string name="unlock_storage_error">Device unlock settings could not be read or saved. Check available storage and use your master password. (DU04)</string>
+    <string name="unlock_changed_error">The vault changed during setup. Close this panel and confirm your current master password again. (DU05)</string>
+    <string name="unlock_biometric_retry">Not recognized. Try the sensor again.</string>
+    <string name="unlock_wrong_pin">Wrong PIN</string>
+    <string name="unlock_wait">Try again in %1$d seconds</string>
+    <string name="unlock_erase">Erase digit</string>
+    <string name="unlock_new_pin">New PIN (4–6 digits)</string>
+    <string name="unlock_confirm_pin">Confirm PIN</string>
+    <string name="unlock_save_pin">Save PIN</string>
+    <string name="unlock_enable_biometric">Enable biometric unlock</string>
+    <string name="unlock_setup_note">Confirm your master password to set up unlock on this device. A longer PIN is safer. Device unlock is not included in backups and must be set up again after password changes or recovery.</string>
+</resources>

@@ -8,6 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
+import com.taskpro.app.ui.screens.settings.RestoreRecovery
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
@@ -21,7 +24,7 @@ import com.taskpro.app.ui.navigation.NavGraph
 import com.taskpro.app.ui.screens.settings.SettingsViewModel
 import com.taskpro.app.ui.theme.TaskProTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : androidx.fragment.app.FragmentActivity() {
 
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* no-op */ }
@@ -36,6 +39,7 @@ class MainActivity : ComponentActivity() {
                 viewModel(factory = AppViewModelProvider.Factory)
             val themeMode by settingsViewModel.themeMode.collectAsStateWithLifecycle()
             val backgroundStyle by settingsViewModel.backgroundStyle.collectAsStateWithLifecycle()
+            val backupState by settingsViewModel.backupState.collectAsStateWithLifecycle()
 
             TaskProTheme(themeMode = themeMode) {
                 ProvideBackgroundStyle(backgroundStyle) {
@@ -43,8 +47,14 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        val navController = rememberNavController()
-                        NavGraph(navController = navController)
+                        if (backupState.ready) {
+                            val navController = rememberNavController()
+                            NavGraph(navController = navController)
+                        } else {
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                RestoreRecovery(backupState.recoveryFailed, settingsViewModel::recover)
+                            }
+                        }
                     }
                 }
             }
@@ -55,5 +65,26 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    override fun dispatchTouchEvent(event: android.view.MotionEvent): Boolean {
+        (application as TaskProApp).container.vaultRepository.touch()
+        return super.dispatchTouchEvent(event)
+    }
+
+    override fun onUserInteraction() {
+        (application as TaskProApp).container.vaultRepository.touch()
+        super.onUserInteraction()
+    }
+
+    override fun onStop() {
+        if (!isChangingConfigurations) (application as TaskProApp).container.vaultRepository.setForeground(false)
+        (application as TaskProApp).container.vaultClipboard.clearOwned()
+        super.onStop()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        (application as TaskProApp).container.vaultRepository.setForeground(true)
     }
 }

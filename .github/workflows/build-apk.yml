@@ -35,7 +35,7 @@ jobs:
         id: build
         run: |
           set -o pipefail
-          ./gradlew :app:assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+          ./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
 
       - name: Capture build error
         if: failure()
@@ -52,7 +52,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-error
-          name: TaskPro — last build error
+          name: Vaurivo — last build error
           body_path: build-error.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,9 +68,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest-debug
-          name: TaskPro — latest debug build
+          name: Vaurivo — latest debug build
           body: |
-            Automated debug build of TaskPro.
+            Automated debug build of Vaurivo.
+            For testing only. Do not store real credentials in this debug build.
             Download `app-debug.apk` below and install it on your Android device
             (enable "Install unknown apps" for your browser/file manager first).
           files: app/build/outputs/apk/debug/app-debug.apk

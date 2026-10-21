@@ -1,0 +1,31 @@
+<resources>
+    <string name="component_busy">Working</string>
+    <string name="component_clear_search">Clear search</string>
+    <string name="component_locked">Locked</string>
+    <string name="component_home">Home</string>
+    <string name="component_overdue">Overdue</string>
+    <string name="component_reordering">Reordering</string>
+    <string name="component_status">Change status</string>
+    <string name="component_menu_for">Options for %1$s</string>
+    <string name="component_favorite">Favorite</string>
+    <string name="component_not_favorite">Not a favorite</string>
+    <string name="component_hidden">Hidden</string>
+    <string name="component_shown">Revealed visually</string>
+    <string name="component_hide">Hide %1$s</string>
+    <string name="component_show">Show %1$s</string>
+    <string name="component_copy_field">Copy %1$s</string>
+    <string name="component_open_field">Open %1$s</string>
+    <string name="component_decrease">Decrease length</string>
+    <string name="component_increase">Increase length</string>
+    <string name="component_generator_classes">Select at least one character type.</string>
+    <string name="component_candidate">Generated password</string>
+    <string name="component_use_password">Use Password</string>
+    <plurals name="component_direct_items">
+        <item quantity="one">%1$d direct item</item>
+        <item quantity="other">%1$d direct items</item>
+    </plurals>
+    <plurals name="component_subgroups">
+        <item quantity="one">%1$d subgroup</item>
+        <item quantity="other">%1$d subgroups</item>
+    </plurals>
+</resources>

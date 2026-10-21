@@ -9,7 +9,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 
 /** Simple single-field dialog for creating/renaming an item. */
 @Composable
@@ -21,11 +26,13 @@ fun NameDialog(
     onDismiss: () -> Unit,
     initialValue: String = ""
 ) {
-    var text by remember {
-        mutableStateOf(TextFieldValue(initialValue, selection = androidx.compose.ui.text.TextRange(initialValue.length)))
+    var text by remember(initialValue) {
+        mutableStateOf(initialValue)
     }
 
     AlertDialog(
+        modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth().padding(horizontal = 16.dp),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
@@ -33,13 +40,14 @@ fun NameDialog(
                 value = text,
                 onValueChange = { text = it },
                 label = { Text(label) },
-                singleLine = true
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
         },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(text.text) },
-                enabled = text.text.isNotBlank()
+                onClick = { onConfirm(text) },
+                enabled = text.isNotBlank()
             ) { Text(confirmText) }
         },
         dismissButton = {

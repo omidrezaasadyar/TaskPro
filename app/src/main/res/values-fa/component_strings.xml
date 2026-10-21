@@ -1,0 +1,31 @@
+<resources>
+    <string name="component_busy">در حال انجام</string>
+    <string name="component_clear_search">پاک کردن جستجو</string>
+    <string name="component_locked">قفل است</string>
+    <string name="component_home">خانه</string>
+    <string name="component_overdue">عقب‌افتاده</string>
+    <string name="component_reordering">در حال جابه‌جایی</string>
+    <string name="component_status">تغییر وضعیت</string>
+    <string name="component_menu_for">گزینه‌های %1$s</string>
+    <string name="component_favorite">برگزیده</string>
+    <string name="component_not_favorite">برگزیده نیست</string>
+    <string name="component_hidden">پنهان</string>
+    <string name="component_shown">فقط به‌صورت دیداری نمایش داده شد</string>
+    <string name="component_hide">پنهان کردن %1$s</string>
+    <string name="component_show">نمایش %1$s</string>
+    <string name="component_copy_field">کپی %1$s</string>
+    <string name="component_open_field">باز کردن %1$s</string>
+    <string name="component_decrease">کاهش طول</string>
+    <string name="component_increase">افزایش طول</string>
+    <string name="component_generator_classes">حداقل یک نوع نویسه را انتخاب کنید.</string>
+    <string name="component_candidate">گذرواژهٔ تولیدشده</string>
+    <string name="component_use_password">استفاده از گذرواژه</string>
+    <plurals name="component_direct_items">
+        <item quantity="one">%1$d مورد مستقیم</item>
+        <item quantity="other">%1$d مورد مستقیم</item>
+    </plurals>
+    <plurals name="component_subgroups">
+        <item quantity="one">%1$d زیرگروه</item>
+        <item quantity="other">%1$d زیرگروه</item>
+    </plurals>
+</resources>

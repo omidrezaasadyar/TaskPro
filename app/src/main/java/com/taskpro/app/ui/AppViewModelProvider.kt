@@ -7,6 +7,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.taskpro.app.TaskProApp
 import com.taskpro.app.ui.screens.home.HomeViewModel
+import com.taskpro.app.ui.screens.dashboard.DashboardViewModel
+import com.taskpro.app.ui.screens.tasks.TasksViewModel
 import com.taskpro.app.ui.screens.item.ItemDetailViewModel
 import com.taskpro.app.ui.screens.item.ItemStatusListViewModel
 import com.taskpro.app.ui.screens.search.SearchViewModel
@@ -17,10 +19,12 @@ object AppViewModelProvider {
 
     val Factory = viewModelFactory {
         initializer { HomeViewModel(app().container.taskRepository) }
+        initializer { DashboardViewModel(app().container.taskRepository) }
+        initializer { TasksViewModel(app().container.taskRepository) }
         initializer { ItemDetailViewModel(this.createSavedStateHandle(), app().container.taskRepository) }
         initializer { ItemStatusListViewModel(this.createSavedStateHandle(), app().container.taskRepository) }
         initializer { SearchViewModel(app().container.taskRepository) }
-        initializer { SettingsViewModel(app().container.settingsRepository) }
+        initializer { SettingsViewModel(app().container.settingsRepository, app().container.backupRepository) }
     }
 }
 

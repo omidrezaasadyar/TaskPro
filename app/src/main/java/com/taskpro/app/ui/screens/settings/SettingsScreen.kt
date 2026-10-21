@@ -141,6 +141,8 @@ fun SettingsScreen(
             }
 
             Spacer(Modifier.height(24.dp))
+            BackupSection(viewModel)
+            Spacer(Modifier.height(24.dp))
             Text(
                 stringResource(R.string.about),
                 style = MaterialTheme.typography.titleMedium,

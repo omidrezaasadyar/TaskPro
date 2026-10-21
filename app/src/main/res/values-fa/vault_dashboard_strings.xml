@@ -1,0 +1,27 @@
+<resources>
+    <string name="vault_overview">نمای کلی گاوصندوق</string>
+    <string name="vault_groups_heading">گروه‌ها</string>
+    <string name="vault_new_group_label">گروه جدید</string>
+    <string name="vault_items">موارد ذخیره‌شده</string>
+    <string name="vault_favorites_heading">علاقه‌مندی‌ها</string>
+    <string name="vault_view_all">نمایش همه</string>
+    <string name="vault_search_all">جستجو در همهٔ گروه‌ها</string>
+    <string name="vault_browse_hint">موردی مطابق این نما وجود ندارد.</string>
+    <string name="vault_empty_hint">موارد ذخیره‌شده اینجا نمایش داده می‌شوند.</string>
+    <string name="vault_reset_filters">پاک کردن فیلترها</string>
+    <string name="vault_recovery_view">نمایش کلید ذخیره‌شده</string>
+    <string name="vault_recovery_legacy">برای نمایش یا تولید کلید، رمز اصلی را وارد کنید. کلیدهای نسخه‌های قدیمی ممکن است برای نمایش نیاز به تولید مجدد داشته باشند. تولید کلید، کلید فعلی را جایگزین می‌کند اما دسترسی به نسخه‌های پشتیبان قدیمی را لغو نمی‌کند.</string>
+    <string name="vault_total_groups">کل گروه‌ها</string>
+    <string name="vault_total_items">کل موارد ذخیره‌شده</string>
+    <string name="vault_add_item">افزودن مورد</string>
+    <string name="vault_filters">فیلتر و مرتب‌سازی</string>
+    <string name="vault_folder_count">%1$d مورد · %2$d زیرگروه</string>
+    <plurals name="vault_group_total">
+        <item quantity="one">%d گروه</item>
+        <item quantity="other">%d گروه</item>
+    </plurals>
+    <plurals name="vault_item_total">
+        <item quantity="one">%d مورد</item>
+        <item quantity="other">%d مورد</item>
+    </plurals>
+</resources>

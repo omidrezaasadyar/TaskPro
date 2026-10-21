@@ -32,6 +32,10 @@ fun GradientBackground(
     content: @Composable () -> Unit
 ) {
     val style = LocalBackgroundStyle.current
+    if (style == BackgroundStyle.GRADIENT) {
+        com.taskpro.app.ui.screens.WorkspaceBackdrop(modifier.fillMaxSize()) { content() }
+        return
+    }
     val primary = MaterialTheme.colorScheme.primary
     val secondary = MaterialTheme.colorScheme.secondary
     val surface = MaterialTheme.colorScheme.background

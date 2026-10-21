@@ -55,8 +55,7 @@ class ReminderActivity : ComponentActivity() {
         startAlerting()
 
         setContent {
-            // The popup uses its own vivid styling, so the system theme choice
-            // is read but the screen mostly paints its own gradient.
+            // Match the system appearance, including the lock-screen reminder.
             TaskProTheme(themeMode = ThemeMode.SYSTEM) {
                 ReminderPopupScreen(
                     title = title,

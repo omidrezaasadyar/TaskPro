@@ -1,0 +1,34 @@
+<resources>
+    <string name="unlock_create_master">ایجاد رمز اصلی</string>
+    <string name="unlock_existing_vault_note">یک گاوصندوق رمزگذاری‌شده در این دستگاه ذخیره شده است. ایجاد رمز اصلی در این بخش، پس از ذخیره نسخه رمزگذاری‌شده قبلی، گاوصندوق خالی جدیدی ایجاد می‌کند. برای استفاده از اطلاعات قبلی، لغو کنید و با رمز اصلی یا کلید بازیابی وارد شوید.</string>
+    <string name="unlock_create_confirm_title">گاوصندوق خالی جدید ایجاد شود؟</string>
+    <string name="unlock_create_confirm_text">ابتدا محل ذخیره نسخه پشتیبان رمزگذاری‌شده گاوصندوق قبلی را انتخاب کنید. رمز فایل پشتیبان همان رمز اصلی جدیدی است که وارد کردید. باز کردن اطلاعات قدیمی همچنان به رمز اصلی قبلی یا کلید بازیابی آن نیاز دارد. پس از ذخیره و بررسی پشتیبان، گاوصندوق خالی جدید فعال می‌شود. اطلاعات و تنظیمات بخش کارها تغییر نمی‌کنند. لغو یا خطای پشتیبان، گاوصندوق فعلی را تغییر نمی‌دهد.</string>
+    <string name="unlock_save_previous">ذخیره پشتیبان و ایجاد گاوصندوق</string>
+    <string name="unlock_create_error">راه‌اندازی کامل نشد. فضای خالی را بررسی کنید، لغو کنید و دوباره وارد گاوصندوق شوید. هر فایل پشتیبان ذخیره‌شده را نگه دارید.</string>
+    <string name="unlock_vault">گاوصندوق</string>
+    <string name="unlock_locked">گاوصندوق قفل است</string>
+    <string name="unlock_timeout">قفل خودکار پس از ۱ دقیقه دور بودن</string>
+    <string name="unlock_touch">برای باز کردن حسگر را لمس کنید</string>
+    <string name="unlock_another">یا از روش دیگری وارد شوید</string>
+    <string name="unlock_pin">ورود با پین</string>
+    <string name="unlock_master">رمز اصلی</string>
+    <string name="unlock_title">باز کردن گاوصندوق</string>
+    <string name="unlock_fingerprint">باز کردن با اثر انگشت</string>
+    <string name="unlock_settings">تنظیمات ورود</string>
+    <string name="unlock_device_error">ورود دستگاه ممکن نیست. از رمز اصلی استفاده کنید یا ورود دستگاه را دوباره تنظیم کنید.</string>
+    <string name="unlock_existing_master">رمز اصلی فعلی</string>
+    <string name="unlock_master_error">رمز اصلی تأیید نشد. رمز فعلی گاوصندوق را وارد کنید. این صفحه رمز اصلی جدید ایجاد نمی‌کند. (DU01)</string>
+    <string name="unlock_pin_setup_error">محافظت پین ایجاد نشد. گاوصندوق و پین قبلی تغییر نکرده‌اند. از رمز اصلی استفاده کنید. (DU02)</string>
+    <string name="unlock_keystore_error">ذخیره‌ساز امن کلید اندروید نتوانست ورود دستگاه را تکمیل کند. گوشی را راه‌اندازی مجدد کنید و دوباره تلاش کنید یا از رمز اصلی استفاده کنید. (DU03)</string>
+    <string name="unlock_storage_error">تنظیمات ورود دستگاه خوانده یا ذخیره نشد. فضای خالی دستگاه را بررسی کنید و از رمز اصلی استفاده کنید. (DU04)</string>
+    <string name="unlock_changed_error">گاوصندوق هنگام تنظیم تغییر کرد. پنجره را ببندید و رمز اصلی فعلی را دوباره تأیید کنید. (DU05)</string>
+    <string name="unlock_biometric_retry">شناسایی نشد. حسگر را دوباره امتحان کنید.</string>
+    <string name="unlock_wrong_pin">پین اشتباه است</string>
+    <string name="unlock_wait">تلاش مجدد پس از %1$d ثانیه</string>
+    <string name="unlock_erase">پاک کردن رقم</string>
+    <string name="unlock_new_pin">پین جدید (۴ تا ۶ رقم)</string>
+    <string name="unlock_confirm_pin">تأیید پین</string>
+    <string name="unlock_save_pin">ذخیره پین</string>
+    <string name="unlock_enable_biometric">فعال‌سازی ورود بیومتریک</string>
+    <string name="unlock_setup_note">برای تنظیم ورود در این دستگاه، رمز اصلی را تأیید کنید. پین بلندتر امن‌تر است. ورود دستگاه در پشتیبان ذخیره نمی‌شود و پس از تغییر رمز یا بازیابی باید دوباره تنظیم شود.</string>
+</resources>

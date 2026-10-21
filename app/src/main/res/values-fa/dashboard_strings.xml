@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_morning">صبح بخیر</string>
+    <string name="dashboard_afternoon">روز بخیر</string>
+    <string name="dashboard_evening">عصر بخیر</string>
+    <string name="dashboard_search">جستجوی کارها</string>
+    <string name="dashboard_results">نتایج کارها</string>
+    <string name="dashboard_no_results">کاری پیدا نشد</string>
+    <string name="dashboard_search_hint">عنوان یا یادداشت هیچ کاری با جستجوی شما مطابقت ندارد.</string>
+    <string name="dashboard_search_error">جستجوی کارها انجام نشد.</string>
+    <string name="dashboard_loading">در حال بارگذاری کارها</string>
+    <string name="dashboard_error">اطلاعات کارها بارگذاری نشد.</string>
+    <string name="dashboard_retry">تلاش دوباره</string>
+    <string name="dashboard_workspaces">فضاهای کاری</string>
+    <string name="dashboard_up_next">کارهای پیش رو</string>
+    <string name="dashboard_active">کارهای فعال: %1$s</string>
+    <string name="dashboard_open_vault">باز کردن گاوصندوق</string>
+    <string name="dashboard_scheduled">برنامهٔ امروز</string>
+    <string name="dashboard_none_scheduled">برای امروز کاری زمان‌بندی نشده است</string>
+    <string name="dashboard_progress">%1$s · %2$s انجام‌شده</string>
+    <string name="dashboard_overdue">عقب‌افتاده: %1$s</string>
+    <string name="dashboard_future">پیش رو: %1$s</string>
+    <string name="dashboard_no_upcoming">کاری در پیش نیست</string>
+    <string name="dashboard_no_upcoming_hint">هیچ کار انجام‌نشده‌ای با موعد آینده وجود ندارد.</string>
+    <string name="dashboard_undated">بدون موعد</string>
+</resources>

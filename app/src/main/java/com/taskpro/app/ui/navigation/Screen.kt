@@ -2,7 +2,11 @@ package com.taskpro.app.ui.navigation
 
 /** Type-safe-ish route definitions for the app's navigation graph. */
 sealed class Screen(val route: String) {
+    data object Workspace : Screen("workspace")
+    data object Dashboard : Screen("dashboard")
+    data object Vault : Screen("vault")
     data object Home : Screen("home")
+    data object Tasks : Screen("tasks")
     data object Search : Screen("search")
     data object Settings : Screen("settings")
 

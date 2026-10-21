@@ -32,6 +32,8 @@ class TaskRepository(
     suspend fun getTasksForItem(itemId: Long): List<Task> = taskDao.getTasksForItem(itemId)
 
     // ---- Tasks ----
+    fun observeDashboardTasks(): Flow<List<TaskWithItemName>> = taskDao.observeDashboardTasks()
+
     fun observeTasks(itemId: Long, status: TaskStatus): Flow<List<Task>> =
         taskDao.observeTasks(itemId, status)
 
@@ -53,6 +55,19 @@ class TaskRepository(
 
     suspend fun updateTask(task: Task) {
         taskDao.update(task)
+        syncReminder(task)
+    }
+
+    suspend fun editPendingTask(id: Long, title: String, notes: String, dueAt: Long?) {
+        require(title.isNotBlank())
+        syncReminder(taskDao.editPendingTask(id, title.trim(), notes.trim(), dueAt))
+    }
+
+    suspend fun setStatusById(id: Long, status: TaskStatus) {
+        taskDao.getById(id)?.let { setStatus(it, status) }
+    }
+
+    private fun syncReminder(task: Task) {
         // Re-arm or clear the reminder to match the saved state.
         if (task.dueAt != null && task.status == TaskStatus.PENDING && task.dueAt > System.currentTimeMillis()) {
             scheduler.schedule(task.id, task.title, task.dueAt)

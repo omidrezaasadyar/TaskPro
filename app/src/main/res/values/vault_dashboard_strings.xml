@@ -1,0 +1,20 @@
+<resources>
+    <string name="vault_overview">Vault overview</string>
+    <string name="vault_groups_heading">Groups</string>
+    <string name="vault_new_group_label">New group</string>
+    <string name="vault_items">Saved items</string>
+    <string name="vault_favorites_heading">Favorites</string>
+    <string name="vault_view_all">View all</string>
+    <string name="vault_search_all">Search across all groups</string>
+    <string name="vault_browse_hint">Nothing matches this view.</string>
+    <string name="vault_empty_hint">Saved items will appear here.</string>
+    <string name="vault_reset_filters">Reset filters</string>
+    <plurals name="vault_group_total">
+        <item quantity="one">%d group</item>
+        <item quantity="other">%d groups</item>
+    </plurals>
+    <plurals name="vault_item_total">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+</resources>

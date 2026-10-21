@@ -1,378 +1,122 @@
 package com.taskpro.app.ui.screens.item
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DeleteOutline
-import androidx.compose.material.icons.filled.DragHandle
-import androidx.compose.material.icons.filled.Snooze
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.taskpro.app.R
-import com.taskpro.app.data.Task
-import com.taskpro.app.data.TaskStatus
+import com.taskpro.app.data.*
 import com.taskpro.app.ui.AppViewModelProvider
-import com.taskpro.app.ui.components.DraggableItem
-import com.taskpro.app.ui.components.GradientBackground
-import com.taskpro.app.ui.components.TaskCard
-import com.taskpro.app.ui.components.dragContainer
-import com.taskpro.app.ui.components.rememberDragDropState
-import com.taskpro.app.ui.theme.LocalAppDarkTheme
-import com.taskpro.app.ui.theme.StatusCompleted
-import com.taskpro.app.ui.theme.StatusSnoozed
+import com.taskpro.app.ui.components.*
+import com.taskpro.app.ui.components.shared.IconAction
+import com.taskpro.app.ui.screens.tasks.ManagedTaskRow
+import com.taskpro.app.ui.screens.tasks.taskMetadata
+import com.taskpro.app.ui.theme.LocalVaurivoColors
 import com.taskpro.app.util.ShareUtil
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun ItemDetailScreen(
-    onBack: () -> Unit,
-    onOpenStatusList: (itemId: Long, status: String) -> Unit,
-    viewModel: ItemDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
+fun ItemDetailScreen(onBack: () -> Unit, onOpenStatusList: (Long, String) -> Unit,
+    viewModel: ItemDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val item by viewModel.item.collectAsStateWithLifecycle()
     val tasks by viewModel.pendingTasks.collectAsStateWithLifecycle()
-    val completedCount by viewModel.completedCount.collectAsStateWithLifecycle()
-    val snoozedCount by viewModel.snoozedCount.collectAsStateWithLifecycle()
+    val completed by viewModel.completedCount.collectAsStateWithLifecycle()
+    val snoozed by viewModel.snoozedCount.collectAsStateWithLifecycle()
+    val p = LocalVaurivoColors.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-
-    var showAddSheet by remember { mutableStateOf(false) }
-    var taskBeingEdited by remember { mutableStateOf<Task?>(null) }
-
-    // Local mutable copy so drag reordering feels instant; resynced from the
-    // database whenever we are not mid-drag.
-    val localTasks: SnapshotStateList<Task> = remember { mutableStateListOf() }
+    var creating by remember { mutableStateOf(false) }
+    var editing by remember { mutableStateOf<Task?>(null) }
+    var busy by remember { mutableStateOf(false) }
+    var failed by remember { mutableStateOf(false) }
+    var suppressEditUntil by remember { mutableLongStateOf(0L) }
+    val dragHint = stringResource(R.string.reorder_hint)
+    fun action(block: suspend () -> Unit) {
+        if (!busy) { busy = true; scope.launch {
+            try { block() } catch (e: kotlinx.coroutines.CancellationException) { throw e }
+            catch (_: Exception) { failed = true } finally { busy = false }
+        } }
+    }
+    val localTasks = remember { mutableStateListOf<Task>() }
     val listState = rememberLazyListState()
-
-    val dragState = rememberDragDropState(
-        listState = listState,
-        onMove = { from, to ->
-            if (from in localTasks.indices && to in localTasks.indices) {
-                localTasks.add(to, localTasks.removeAt(from))
-            }
-        },
-        onDragEnd = { viewModel.persistOrder(localTasks.toList()) }
-    )
-
-    LaunchedEffect(tasks) {
-        if (dragState.draggingItemIndex == null) {
-            localTasks.clear()
-            localTasks.addAll(tasks)
+    val drag = rememberDragDropState(listState, onMove = { from, to ->
+        if (!busy && from in localTasks.indices && to in localTasks.indices) localTasks.add(to, localTasks.removeAt(from))
+    }, onDragEnd = {
+        suppressEditUntil = android.os.SystemClock.uptimeMillis() + 250
+        val ordered = localTasks.toList()
+        action { viewModel.reorder(ordered) }
+    })
+    LaunchedEffect(tasks, drag.draggingItemIndex, busy) {
+        if (drag.draggingItemIndex == null && !busy) { localTasks.clear(); localTasks.addAll(tasks) }
+    }
+    fun move(from: Int, to: Int) {
+        if (from in localTasks.indices && to in localTasks.indices) {
+            localTasks.add(to, localTasks.removeAt(from))
+            val ordered = localTasks.toList()
+            action { viewModel.reorder(ordered) }
         }
     }
-
-    Scaffold(
-        containerColor = Color.Transparent,
-        topBar = {
-            TopAppBar(
-                title = { Text(item?.name ?: stringResource(R.string.app_name)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
-                    }
-                },
-                actions = {
-                    IconButton(onClick = {
-                        scope.launch {
-                            val all = viewModel.tasksForExport()
-                            ShareUtil.share(context, item?.name ?: "", all)
-                        }
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.Send,
-                            stringResource(R.string.send_a_copy)
-                        )
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { showAddSheet = true }) {
-                Icon(Icons.Default.Add, stringResource(R.string.add_task))
-            }
+    Scaffold(containerColor = p.canvas, topBar = {
+        TopAppBar(title = { Text(item?.name.orEmpty()) },
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = p.canvas),
+            navigationIcon = { IconAction(stringResource(R.string.back), Icons.AutoMirrored.Filled.ArrowBack, onBack) },
+            actions = { IconAction(stringResource(R.string.send_a_copy), Icons.AutoMirrored.Filled.Send, {
+                action { ShareUtil.share(context, item?.name.orEmpty(), viewModel.tasksForExport()) }
+            }) })
+    }, bottomBar = {
+        Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.End) {
+        com.taskpro.app.ui.components.shared.PrimaryActionButton(stringResource(R.string.tasks_new), { creating = true },
+            icon = Icons.Default.Add, compact = true)
         }
-    ) { padding ->
-        GradientBackground {
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // Completed / Snoozed summary boxes — each on its own full-width row
-            // so the labels never wrap. Always visible and tappable.
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                StatusSummaryBox(
-                    label = stringResource(R.string.completed),
-                    count = completedCount,
-                    accent = StatusCompleted,
-                    icon = Icons.Default.CheckCircle,
-                    onClick = {
-                        onOpenStatusList(viewModel.itemId, TaskStatus.COMPLETED.name)
-                    }
-                )
-                StatusSummaryBox(
-                    label = stringResource(R.string.snoozed),
-                    count = snoozedCount,
-                    accent = StatusSnoozed,
-                    icon = Icons.Default.Snooze,
-                    onClick = {
-                        onOpenStatusList(viewModel.itemId, TaskStatus.SNOOZED.name)
-                    }
-                )
+    }) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)) {
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { onOpenStatusList(viewModel.itemId, TaskStatus.COMPLETED.name) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text("${stringResource(R.string.completed)} · $completed")
+                }
+                OutlinedButton(onClick = { onOpenStatusList(viewModel.itemId, TaskStatus.SNOOZED.name) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text("${stringResource(R.string.snoozed)} · $snoozed")
+                }
             }
-
-            if (localTasks.isEmpty()) {
-                EmptyTasks(Modifier.fillMaxSize())
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .dragContainer(dragState),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    item {
-                        Text(
-                            stringResource(R.string.reorder_hint),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(bottom = 4.dp)
-                        )
-                    }
-                    itemsIndexed(localTasks, key = { _, t -> t.id }) { index, task ->
-                    DraggableItem(dragDropState = dragState, index = index) { isDragging ->
-                        TaskCard(
-                            task = task,
-                            isDragging = isDragging,
-                            onClick = {
-                                if (!isDragging) {
-                                    taskBeingEdited = task
-                                }
-                            }
-                        ) {
-                            IconButton(onClick = { viewModel.complete(task) }) {
-                                Icon(
-                                    Icons.Default.Check,
-                                    stringResource(R.string.mark_complete),
-                                    tint = StatusCompleted
-                                )
-                            }
-                            IconButton(onClick = { viewModel.snooze(task) }) {
-                                Icon(
-                                    Icons.Default.Snooze,
-                                    stringResource(R.string.snooze),
-                                    tint = StatusSnoozed
-                                )
-                            }
-                            IconButton(onClick = { viewModel.deleteTask(task) }) {
-                                Icon(
-                                    Icons.Default.DeleteOutline,
-                                    stringResource(R.string.delete),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
-                            }
-                            Icon(
-                                Icons.Default.DragHandle,
-                                contentDescription = stringResource(R.string.drag_to_reorder),
-                                tint = MaterialTheme.colorScheme.outline
-                            )
-                        }
-                    }
+            // Outside the LazyColumn: drag indexes now match task indexes exactly.
+            if (localTasks.isEmpty()) Text(stringResource(R.string.no_tasks_yet), Modifier.padding(vertical = 24.dp), color = p.textSecondary)
+            else LazyColumn(state = listState, modifier = Modifier.weight(1f).dragContainer(drag), contentPadding = PaddingValues(bottom = 16.dp)) {
+                itemsIndexed(localTasks, key = { _, task -> task.id }) { index, task ->
+                    DraggableItem(drag, index) {
+                        ManagedTaskRow(task, taskMetadata(item?.name.orEmpty(), task.dueAt), onEdit = {
+                            if (drag.draggingItemIndex == null && android.os.SystemClock.uptimeMillis() >= suppressEditUntil) editing = task
+                        }, onStatus = { status -> action { viewModel.changeStatus(task, status) } },
+                            onDelete = { action { viewModel.remove(task) } }, busy = busy, dragging = drag.draggingItemIndex != null,
+                            onMoveUp = if (index > 0) ({ move(index, index - 1) }) else null,
+                            onMoveDown = if (index < localTasks.lastIndex) ({ move(index, index + 1) }) else null,
+                            dragHandle = { Box(Modifier.size(48.dp).semantics { stateDescription = dragHint }, contentAlignment = Alignment.Center) {
+                                Icon(Icons.Default.DragHandle, stringResource(R.string.drag_to_reorder), tint = p.textTertiary)
+                            } })
                     }
                 }
             }
         }
-        }
     }
-
-    if (showAddSheet) {
-        AddTaskSheet(
-            onDismiss = { showAddSheet = false },
-            onConfirm = { title, notes, dueAt ->
-                viewModel.addTask(title, notes, dueAt)
-                showAddSheet = false
-            }
-        )
-    }
-
-    taskBeingEdited?.let { task ->
-        AddTaskSheet(
-            taskToEdit = task,
-            onDismiss = { taskBeingEdited = null },
-            onConfirm = { title, notes, dueAt ->
-                viewModel.updateTask(task, title, notes, dueAt)
-                taskBeingEdited = null
-            }
-        )
-    }
-}
-
-/**
- * A tappable box summarising how many of this item's tasks are Completed or
- * Snoozed. Tapping it opens the full list for that status.
- */
-@Composable
-private fun StatusSummaryBox(
-    label: String,
-    count: Int,
-    accent: Color,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val dark = LocalAppDarkTheme.current
-    // A clearly-bounded soft container that reads in both themes.
-    val container = if (dark) accent.copy(alpha = 0.22f) else accent.copy(alpha = 0.14f)
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = container),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Solid accent chip with a white glyph so it stays inside its frame.
-            Box(
-                Modifier
-                    .size(38.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(accent),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-            Spacer(Modifier.size(12.dp))
-            // Label on a single line; it has the whole row width so it never wraps.
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-                modifier = Modifier.weight(1f)
-            )
-            // Count badge
-            Box(
-                Modifier
-                    .clip(RoundedCornerShape(50))
-                    .background(accent)
-                    .padding(horizontal = 12.dp, vertical = 4.dp)
-            ) {
-                Text(
-                    text = count.toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-            Spacer(Modifier.size(6.dp))
-            Icon(
-                Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = null,
-                tint = accent
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyTasks(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(32.dp)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.illustration_empty_tasks),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.size(180.dp)
-            )
-            Spacer(Modifier.height(16.dp))
-            Text(
-                stringResource(R.string.no_tasks_yet),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                stringResource(R.string.add_first_task),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+    if (creating || editing != null) AddTaskSheet(taskToEdit = editing, onDismiss = { creating = false; editing = null },
+        onSave = { _, title, notes, due -> viewModel.save(editing, title, notes, due) })
+    if (failed) AlertDialog(onDismissRequest = { failed = false }, text = { Text(stringResource(R.string.tasks_action_failed)) },
+        confirmButton = { TextButton(onClick = { failed = false }) { Text(stringResource(R.string.ok)) } })
 }

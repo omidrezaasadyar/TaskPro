@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">تسک‌پرو</string>
+    <string name="app_name">Vaurivo</string>
     <string name="drawer_subtitle">کارهای خود را مدیریت کنید</string>
 
     <!-- Menu / navigation -->
@@ -67,7 +67,7 @@
     <string name="background_plain">ساده</string>
     <string name="background_gradient">گرادیانت ملایم</string>
     <string name="background_aurora">شفق</string>
-    <string name="settings_about">تسک‌پرو — مدیریت ساده و رنگی کارها. انجام‌شده = سبز، در انتظار = قرمز، به تعویق افتاده = نارنجی.</string>
+    <string name="settings_about">Vaurivo کارها و گاوصندوق را در یک برنامه گرد هم می‌آورد: کارها، یادداشت‌ها و یادآوری‌ها را مدیریت کنید و اطلاعات خصوصی را در گاوصندوق رمزگذاری‌شده نگه دارید.</string>
 
     <!-- About section -->
     <string name="about">درباره</string>
@@ -93,4 +93,26 @@
     <string name="reminder_channel_name">یادآور کارها</string>
     <string name="reminder_channel_desc">در زمان تعیین‌شده برای هر کار به شما اطلاع می‌دهد</string>
     <string name="reminder_default_title">یادآوری کار</string>
+    <string name="backup_restore">پشتیبان‌گیری و بازیابی</string>
+    <string name="backup_create">ایجاد پشتیبان</string>
+    <string name="backup_restore_action">بازیابی پشتیبان</string>
+    <string name="backup_share">اشتراک‌گذاری پشتیبان</string>
+    <string name="backup_share_label">پشتیبان Vaurivo</string>
+    <string name="backup_last">آخرین پشتیبان: %1$s</string>
+    <string name="backup_never">هنوز ایجاد نشده</string>
+    <string name="backup_storage_note">فایل پشتیبان را در اسناد، دانلودها یا فضای ابری ذخیره کنید تا پس از حذف Vaurivo باقی بماند. این پشتیبان قدیمی کارها شامل یادداشت‌های شماست و رمزگذاری نشده است؛ آن را محرمانه نگه دارید.</string>
+    <string name="backup_confirm">همهٔ گروه‌ها، کارها و تنظیمات فعلی با این پشتیبان جایگزین شوند؟ این کار قابل بازگشت نیست. برای نگهداری اطلاعات فعلی ابتدا پشتیبان بگیرید.\n\nگروه‌ها: %1$d\nکارها: %2$d\nتاریخ ایجاد: %3$s\nنسخهٔ Vaurivo: %4$s\n\nیادآوری‌های آینده دوباره تنظیم می‌شوند. مجوزهای اعلان و زنگ توسط اندروید جداگانه مدیریت می‌شوند.</string>
+    <string name="backup_replace">جایگزینی و بازیابی</string>
+    <string name="backup_success">پشتیبان ذخیره شد. اکنون می‌توانید فایل را به اشتراک بگذارید یا به دستگاه دیگری منتقل کنید.</string>
+    <string name="backup_restore_success">پشتیبان بازیابی شد. کارها، گروه‌ها، تنظیمات و یادآوری‌های آینده بازیابی شدند.</string>
+    <string name="backup_invalid">پشتیبان قدیمی کارهای Vaurivo معتبر نیست، آسیب دیده است یا حجم آن بیش از ۲۰ مگابایت است. اطلاعات فعلی تغییر نکرده است.</string>
+    <string name="backup_unsupported">نسخهٔ قالب این پشتیبان پشتیبانی نمی‌شود. پیش از بازیابی Vaurivo را به‌روز کنید. اطلاعات فعلی تغییر نکرده است.</string>
+    <string name="backup_read_error">خواندن پشتیبان ممکن نشد. دسترسی به فایل را بررسی و دوباره تلاش کنید. اطلاعات فعلی تغییر نکرده است.</string>
+    <string name="backup_write_error">ذخیرهٔ پشتیبان کامل نشد. فضای خالی و دسترسی به مقصد را بررسی و پشتیبان جدیدی ایجاد کنید. به فایل ناقص اعتماد نکنید.</string>
+    <string name="backup_restore_error">بازیابی ناموفق بود. پایگاه دادهٔ فعلی جایگزین نشده است. فضای خالی را بررسی و دوباره تلاش کنید.</string>
+    <string name="backup_recovery_error">آماده‌سازی اطلاعات در Vaurivo کامل نشد. اگر بازیابی قطع شده باشد، اطلاعات بازیابی ذخیره‌شده برای تکمیل تنظیمات و یادآوری‌ها استفاده می‌شود. فضای خالی را بررسی و دوباره تلاش کنید.</string>
+    <string name="backup_share_error">اشتراک‌گذاری ممکن نشد. می‌توانید فایل ذخیره‌شده را از مدیر فایل دستگاه کپی کنید یا به اشتراک بگذارید.</string>
+    <string name="backup_picker_error">انتخاب‌گر فایل اندروید باز نشد. وجود برنامهٔ مدیریت اسناد را بررسی کنید.</string>
+    <string name="backup_working">در حال آماده‌سازی اطلاعات…</string>
+    <string name="backup_retry">تلاش مجدد</string>
 </resources>

@@ -10,6 +10,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ItemDao {
 
+    @Query("SELECT * FROM items ORDER BY id")
+    suspend fun getAll(): List<Item>
+
+    @Query("DELETE FROM items")
+    suspend fun deleteAll()
+
+    @Insert
+    suspend fun insertAll(items: List<Item>)
+
     @Query(
         """
         SELECT i.*,

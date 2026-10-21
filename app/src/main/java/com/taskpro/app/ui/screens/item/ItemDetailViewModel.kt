@@ -49,9 +49,19 @@ class ItemDetailViewModel(
         val trimmed = title.trim()
         if (trimmed.isEmpty()) return
         viewModelScope.launch {
-            repository.updateTask(task.copy(title = trimmed, notes = notes.trim(), dueAt = dueAt))
+            repository.editPendingTask(task.id, trimmed, notes.trim(), dueAt)
         }
     }
+
+    suspend fun save(task: Task?, title: String, notes: String, dueAt: Long?) {
+        require(title.isNotBlank())
+        if (task == null) repository.addTask(itemId, title.trim(), notes.trim(), dueAt)
+        else repository.editPendingTask(task.id, title.trim(), notes.trim(), dueAt)
+    }
+
+    suspend fun changeStatus(task: Task, status: TaskStatus) = repository.setStatusById(task.id, status)
+    suspend fun remove(task: Task) = repository.deleteTask(task)
+    suspend fun reorder(tasks: List<Task>) = repository.reorder(tasks)
 
     fun complete(task: Task) = setStatus(task, TaskStatus.COMPLETED)
     fun snooze(task: Task) = setStatus(task, TaskStatus.SNOOZED)
