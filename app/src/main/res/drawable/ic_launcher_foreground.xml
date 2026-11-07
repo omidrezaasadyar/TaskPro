@@ -2,10 +2,24 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Centred check mark within the adaptive icon safe zone -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M46.5,66.8 L37.8,58.1 C36.7,57 35,57 33.9,58.1 C32.8,59.2 32.8,60.9 33.9,62 L44.6,72.7 C45.7,73.8 47.4,73.8 48.5,72.7 L74.1,47.1 C75.2,46 75.2,44.3 74.1,43.2 C73,42.1 71.3,42.1 70.2,43.2 Z" />
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <group android:scaleX="0.6" android:scaleY="0.6"
+        android:pivotX="60" android:pivotY="60">
+    <path android:pathData="M41,54 H79 A14,14 0,0 1,93 68 V102 A14,14 0,0 1,79 116 H41 A14,14 0,0 1,27 102 V68 A14,14 0,0 1,41 54 Z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="4" />
+    <path android:pathData="M38,55 L38,39 C38,24 48,13 60,13 C72,13 82,24 82,39 L82,55"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
+    <path android:pathData="M43,84 L55,95 L79,70"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="5.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    </group>
 </vector>

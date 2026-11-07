@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="vaurivo_splash_background">#0C1110</color>
+    <color name="vaurivo_intro_mark">#ADB8FF</color>
 </resources>

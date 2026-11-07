@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <path android:pathData="M41,54 H79 A14,14 0,0 1,93 68 V102 A14,14 0,0 1,79 116 H41 A14,14 0,0 1,27 102 V68 A14,14 0,0 1,41 54 Z"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/vaurivo_intro_mark"
+        android:strokeWidth="4" />
+    <path android:pathData="M38,55 L38,39 C38,24 48,13 60,13 C72,13 82,24 82,39 L82,55"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/vaurivo_intro_mark"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
+    <path android:pathData="M43,84 L55,95 L79,70"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/vaurivo_intro_mark"
+        android:strokeWidth="5.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

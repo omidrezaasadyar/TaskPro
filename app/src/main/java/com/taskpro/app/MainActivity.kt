@@ -26,9 +26,13 @@ import com.taskpro.app.ui.AppViewModelProvider
 import com.taskpro.app.ui.components.ProvideBackgroundStyle
 import com.taskpro.app.ui.navigation.NavGraph
 import com.taskpro.app.ui.screens.LaunchIntro
+import com.taskpro.app.ui.screens.IntroMode
+import com.taskpro.app.ui.screens.introDayKey
+import com.taskpro.app.ui.screens.chooseIntroMode
 import com.taskpro.app.ui.screens.settings.SettingsViewModel
 import com.taskpro.app.ui.screens.settings.RestoreRecovery
 import com.taskpro.app.ui.theme.TaskProTheme
+import java.util.TimeZone
 
 class MainActivity : androidx.fragment.app.FragmentActivity() {
 
@@ -39,11 +43,14 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
         super.onCreate(savedInstanceState)
         val animateIntro = savedInstanceState == null &&
             Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) > 0f
+        val today = introDayKey(System.currentTimeMillis(), TimeZone.getDefault())
+        val preferences = getSharedPreferences("vaurivo_intro", MODE_PRIVATE)
+        val introMode = chooseIntroMode(preferences.getInt("last_full_day", -1), today, animateIntro)
+        if (introMode == IntroMode.FULL) preferences.edit().putInt("last_full_day", today).apply()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             splashScreen.setOnExitAnimationListener { splash ->
-                if (!animateIntro) splash.remove()
-                else splash.animate().alpha(0f).setDuration(120L)
-                    .withEndAction { splash.remove() }.start()
+                // The Compose mark starts at the same position and color as this splash icon.
+                splash.remove()
             }
         }
         enableEdgeToEdge()
@@ -55,7 +62,7 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
             val themeMode by settingsViewModel.themeMode.collectAsStateWithLifecycle()
             val backgroundStyle by settingsViewModel.backgroundStyle.collectAsStateWithLifecycle()
             val backupState by settingsViewModel.backupState.collectAsStateWithLifecycle()
-            var showIntro by remember { mutableStateOf(animateIntro) }
+            var showIntro by remember { mutableStateOf(introMode != IntroMode.NONE) }
             LaunchedEffect(backupState.recoveryFailed) {
                 if (backupState.recoveryFailed) showIntro = false
             }
@@ -79,7 +86,7 @@ class MainActivity : androidx.fragment.app.FragmentActivity() {
                                 }
                             }
                             if (showIntro && !backupState.recoveryFailed) {
-                                LaunchIntro(onFinished = { showIntro = false })
+                                LaunchIntro(onFinished = { showIntro = false }, mode = introMode)
                             }
                         }
                     }

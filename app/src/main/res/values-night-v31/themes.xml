@@ -2,6 +2,6 @@
 <resources>
     <style name="Theme.TaskPro" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowSplashScreenBackground">@color/vaurivo_splash_background</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_intro_mark</item>
     </style>
 </resources>
