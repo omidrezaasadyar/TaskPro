@@ -6,6 +6,10 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.junit4.StateRestorationTester
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.taskpro.app.data.*
 import com.taskpro.app.settings.ThemeMode
 import com.taskpro.app.ui.screens.tasks.*
@@ -29,7 +33,9 @@ class TimelineInteractionTest {
         TaskWithItemName(Task(4, 1, "Completed fixture", dueAt = now, status = TaskStatus.COMPLETED), "Group"),
         TaskWithItemName(Task(5, 1, "Snoozed fixture", dueAt = now, status = TaskStatus.SNOOZED), "Group"))
     private fun screen() { compose.setContent { TaskProTheme(ThemeMode.DARK) {
-        TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, {}, {}, {}, { _, _ -> }, {}, {})
+        var selected by rememberSaveable { mutableStateOf<Long?>(null) }
+        TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, {}, {}, {}, { _, _ -> }, {}, {},
+            selected, { selected = it })
     } } }
     private fun button(text: String) = compose.onNode(hasText(text) and hasClickAction())
     private fun menu(text: String) = compose.onNode(hasText(text) and hasClickAction() and hasAnyAncestor(isPopup()))
@@ -41,16 +47,44 @@ class TimelineInteractionTest {
     @Test fun dateHeaderShowsActualDailyProgressAndSwitchesWithWeek() {
         screen()
         compose.onNodeWithText("3 tasks · 1 done").assertExists()
+        compose.onNodeWithTag("tasksWeekStrip").performTouchInput { swipeLeft() }
         compose.onNodeWithContentDescription("Sunday 18 October 2026").performClick()
         compose.onNodeWithText("1 task · 0 done").assertExists()
         compose.onNodeWithText("Tomorrow pending").assertExists()
+    }
+    @Test fun weekSwipeTodayAndMonthLabelTrackSelectedDay() {
+        screen()
+        compose.onNodeWithText("October 2026").assertExists()
+        compose.onNodeWithTag("tasksWeekStrip").performTouchInput { swipeLeft() }
+        compose.onNodeWithText("Saturday, 24 Oct").assertExists()
+        compose.onNodeWithTag("tasksWeekStrip").performTouchInput { swipeRight() }
+        compose.onNodeWithText("Saturday, 17 Oct").assertExists()
+        button("Today").performClick()
+        compose.onNodeWithText("Today pending").assertExists()
+    }
+    @Test fun rtlSwipeRightMovesToNextWeek() {
+        compose.setContent { CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+            TaskProTheme(ThemeMode.DARK) {
+                var selected by rememberSaveable { mutableStateOf<Long?>(null) }
+                TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, {}, {}, {}, { _, _ -> }, {}, {},
+                    selected, { selected = it })
+            }
+        } }
+        compose.onNodeWithTag("tasksWeekStrip").performTouchInput { swipeRight() }
+        compose.onNodeWithText("Saturday, 24 Oct").assertExists()
+    }
+    @Config(qualifiers = "en-rUS-w320dp-h800dp-mdpi")
+    @Test fun narrowWeekStripStillPagesByWeek() {
+        screen()
+        compose.onNodeWithTag("tasksWeekStrip").performTouchInput { swipeLeft() }
+        compose.onNodeWithText("Saturday, 24 Oct").assertExists()
     }
     @Test fun undatedTodayAllDatesAndWeekControlsWork() {
         screen()
         date("Undated")
         compose.onNodeWithText("Undated pending").assertExists()
         compose.onNodeWithText("Today pending").assertDoesNotExist()
-        compose.onNodeWithContentDescription("Choose date").performClick(); button("Today").performClick()
+        button("Today").performClick()
         compose.onNodeWithText("Today pending").assertExists()
         compose.onNodeWithText("Undated pending").assertDoesNotExist()
         compose.onNodeWithContentDescription("Choose date").performClick(); button("Next week").performClick()
@@ -115,7 +149,9 @@ class TimelineInteractionTest {
     @Test fun selectedDayScopeStatusAndTogglesSurviveSavedStateRestoration() {
         val restoration = StateRestorationTester(compose)
         restoration.setContent { TaskProTheme(ThemeMode.DARK) {
-            TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, {}, {}, {}, { _, _ -> }, {}, {})
+            var selected by rememberSaveable { mutableStateOf<Long?>(null) }
+            TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, {}, {}, {}, { _, _ -> }, {}, {},
+                selected, { selected = it })
         } }
         compose.onNodeWithContentDescription("Saturday 17 October 2026").performClick()
         openFilters()
@@ -134,7 +170,9 @@ class TimelineInteractionTest {
     @Test fun filterPanelRetainsSearchAction() {
         var searches = 0
         compose.setContent { TaskProTheme(ThemeMode.DARK) {
-            TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, { searches++ }, {}, {}, { _, _ -> }, {}, {})
+            var selected by rememberSaveable { mutableStateOf<Long?>(null) }
+            TimelineScreen(TasksState(rows, emptyList(), now, "UTC", false), {}, { searches++ }, {}, {}, { _, _ -> }, {}, {},
+                selected, { selected = it })
         } }
         openFilters()
         button("Search").performClick()

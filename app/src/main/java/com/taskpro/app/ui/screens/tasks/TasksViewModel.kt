@@ -1,9 +1,11 @@
 package com.taskpro.app.ui.screens.tasks
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.taskpro.app.data.*
 import com.taskpro.app.ui.screens.dashboard.dashboardClock
+import com.taskpro.app.ui.screens.dashboard.DashboardMoment
 import kotlinx.coroutines.flow.*
 
 data class TasksState(
@@ -16,10 +18,14 @@ data class TasksState(
 )
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-class TasksViewModel(private val repository: TaskRepository) : ViewModel() {
+class TasksViewModel(private val repository: TaskRepository,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
+    private val moments: Flow<DashboardMoment> = dashboardClock()) : ViewModel() {
+    val selectedDay: StateFlow<Long?> = savedStateHandle.getStateFlow("selected_day", null)
+    fun selectDay(day: Long?) { savedStateHandle["selected_day"] = day }
     private val retry = MutableStateFlow(0)
     val state = retry.flatMapLatest {
-        combine(repository.observeDashboardTasks(), repository.observeItemsWithCounts(), dashboardClock()) { rows, groups, clock ->
+        combine(repository.observeDashboardTasks(), repository.observeItemsWithCounts(), moments) { rows, groups, clock ->
             TasksState(rows, groups, clock.now, clock.zoneId, loading = false)
         }.onStart { emit(TasksState()) }.catch { emit(TasksState(loading = false, failed = true)) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(0, 0), TasksState())

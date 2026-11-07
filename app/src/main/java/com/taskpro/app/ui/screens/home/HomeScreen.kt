@@ -43,7 +43,7 @@ fun HomeScreen(onItemClick: (Long) -> Unit, onNavigate: (Screen) -> Unit,
             catch (e: kotlinx.coroutines.CancellationException) { throw e }
             catch (_: Exception) { error = true }
         } }, onTimeline = { onNavigate(Screen.Tasks) },
-        onSearch = { onNavigate(Screen.Search) }, onSettings = { onNavigate(Screen.Settings) })
+        onSearch = { onNavigate(Screen.Search) })
     if (adding) NameDialog(stringResource(R.string.tasks_new_group), stringResource(R.string.tasks_group_name),
         stringResource(R.string.add), { viewModel.addItem(it); adding = false }, { adding = false })
     rename?.let { item -> NameDialog(stringResource(R.string.tasks_rename_group), stringResource(R.string.tasks_group_name),
@@ -60,7 +60,7 @@ fun HomeScreen(onItemClick: (Long) -> Unit, onNavigate: (Screen) -> Unit,
 @Composable
 fun GroupsScreen(items: List<ItemWithTaskCounts>, onItemClick: (Long) -> Unit, onAdd: () -> Unit,
     onRename: (Item) -> Unit, onDelete: (Item) -> Unit, onShare: (Item) -> Unit,
-    onTimeline: () -> Unit, onSearch: () -> Unit, onSettings: () -> Unit) {
+    onTimeline: () -> Unit, onSearch: () -> Unit) {
     val p = LocalVaurivoColors.current
     Scaffold(containerColor = p.canvas, bottomBar = {
         Row(Modifier.fillMaxWidth().padding(12.dp), horizontalArrangement = Arrangement.End) {
@@ -74,7 +74,6 @@ fun GroupsScreen(items: List<ItemWithTaskCounts>, onItemClick: (Long) -> Unit, o
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.tasks_title), Modifier.weight(1f), style = MaterialTheme.typography.headlineSmall, color = p.textPrimary)
                     IconAction(stringResource(R.string.search), Icons.Default.Search, onSearch)
-                    IconAction(stringResource(R.string.settings), Icons.Default.Settings, onSettings)
                 }
                 TasksViewSelector(true, onTimeline, {})
             }

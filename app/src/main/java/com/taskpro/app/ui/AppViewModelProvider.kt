@@ -20,7 +20,7 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer { HomeViewModel(app().container.taskRepository) }
         initializer { DashboardViewModel(app().container.taskRepository) }
-        initializer { TasksViewModel(app().container.taskRepository) }
+        initializer { TasksViewModel(app().container.taskRepository, this.createSavedStateHandle()) }
         initializer { ItemDetailViewModel(this.createSavedStateHandle(), app().container.taskRepository) }
         initializer { ItemStatusListViewModel(this.createSavedStateHandle(), app().container.taskRepository) }
         initializer { SearchViewModel(app().container.taskRepository) }

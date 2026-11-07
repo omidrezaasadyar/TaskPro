@@ -68,7 +68,19 @@ class TimelineStateTest {
         val selected = Instant.parse("2026-12-31T10:00:00Z").toEpochMilli()
         val days = weekDays(selected, zone)
         assertEquals(7, days.size); assertEquals(7, days.toSet().size)
-        assertEquals(dayBounds(selected, zone).first, days[3])
-        assertEquals(Instant.parse("2027-01-03T00:00:00Z").toEpochMilli(), days.last())
+        assertTrue(days.contains(dayBounds(selected, zone).first))
+        assertEquals(shiftDay(days.first(), 6, zone), days.last())
+        assertEquals(java.util.Calendar.getInstance(zone, java.util.Locale.getDefault()).firstDayOfWeek,
+            java.util.Calendar.getInstance(zone).apply { timeInMillis = days.first() }.get(java.util.Calendar.DAY_OF_WEEK))
+    }
+    @Test fun selectedDayDefaultKeepsLocalTimeAcrossWeekAndDst() {
+        val ny = TimeZone.getTimeZone("America/New_York")
+        val now = Instant.parse("2026-03-06T15:30:00Z").toEpochMilli()
+        val future = Instant.parse("2026-03-09T12:00:00Z").toEpochMilli()
+        val due = selectedDayDueAt(future, now, ny)
+        val local = java.util.Calendar.getInstance(ny).apply { timeInMillis = due }
+        assertEquals(9, local.get(java.util.Calendar.DAY_OF_MONTH))
+        assertEquals(10, local.get(java.util.Calendar.HOUR_OF_DAY))
+        assertEquals(30, local.get(java.util.Calendar.MINUTE))
     }
 }

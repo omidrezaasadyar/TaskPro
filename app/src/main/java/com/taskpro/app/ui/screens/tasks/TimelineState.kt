@@ -4,6 +4,7 @@ import com.taskpro.app.data.TaskStatus
 import com.taskpro.app.data.TaskWithItemName
 import java.util.Calendar
 import java.util.TimeZone
+import java.util.Locale
 
 enum class DateScope { ALL, DAY, UNDATED }
 enum class TimelineSection { OVERDUE, SELECTED_DAY, UPCOMING, EARLIER, UNDATED }
@@ -31,7 +32,25 @@ internal fun shiftDay(instant: Long, days: Int, zone: TimeZone): Long =
     Calendar.getInstance(zone).apply { timeInMillis = instant; add(Calendar.DAY_OF_MONTH, days) }.timeInMillis
 
 internal fun weekDays(selected: Long, zone: TimeZone): List<Long> =
-    (-3..3).map { shiftDay(dayBounds(selected, zone).first, it, zone) }
+    Calendar.getInstance(zone, Locale.getDefault()).run {
+        timeInMillis = dayBounds(selected, zone).first
+        val offset = (get(Calendar.DAY_OF_WEEK) - firstDayOfWeek + 7) % 7
+        val start = shiftDay(timeInMillis, -offset, zone)
+        (0..6).map { shiftDay(start, it, zone) }
+    }
+
+/** Reuses the current time of day for a task started from a selected calendar day. */
+internal fun selectedDayDueAt(day: Long, now: Long, zone: TimeZone): Long {
+    val chosen = Calendar.getInstance(zone).apply { timeInMillis = day }
+    return Calendar.getInstance(zone).apply {
+        timeInMillis = now
+        set(Calendar.YEAR, chosen.get(Calendar.YEAR))
+        set(Calendar.MONTH, chosen.get(Calendar.MONTH))
+        set(Calendar.DAY_OF_MONTH, chosen.get(Calendar.DAY_OF_MONTH))
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
+}
 
 /** A read-only, mutually exclusive partition. No ordering is written to Room. */
 fun timelineSections(rows: List<TaskWithItemName>, filter: TimelineFilter, now: Long, zone: TimeZone):

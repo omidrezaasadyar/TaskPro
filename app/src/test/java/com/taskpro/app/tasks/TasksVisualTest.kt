@@ -88,8 +88,12 @@ class TasksVisualTest {
                     Box(Modifier.requiredSize(width.dp, height.dp).testTag("tasksCapture")) {
                         Scaffold(bottomBar = { BottomNavigationBar(WorkspaceTab.Tasks, {}) }, contentWindowInsets = WindowInsets(0, 0, 0, 0)) { padding ->
                             Box(Modifier.padding(padding).consumeWindowInsets(padding)) {
-                                if (groups) GroupsScreen(items, { opens++ }, {}, {}, {}, {}, {}, {}, {})
-                                else TimelineScreen(TasksState(rows, items, now, "UTC", false), {}, {}, {}, { opens++ }, { _, _ -> }, {}, {})
+                                if (groups) GroupsScreen(items, { opens++ }, {}, {}, {}, {}, {}, {})
+                                else {
+                                    var selected by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf<Long?>(null) }
+                                    TimelineScreen(TasksState(rows, items, now, "UTC", false), {}, {}, {}, { opens++ }, { _, _ -> }, {}, {},
+                                        selected, { selected = it })
+                                }
                             }
                         }
                     }

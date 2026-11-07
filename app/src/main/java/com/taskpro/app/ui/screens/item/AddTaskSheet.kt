@@ -63,20 +63,22 @@ fun AddTaskSheet(
     onDismiss: () -> Unit,
     onConfirm: (title: String, notes: String, dueAt: Long?) -> Unit = { _, _, _ -> },
     groups: List<Item>? = null,
-    onSave: (suspend (groupId: Long?, title: String, notes: String, dueAt: Long?) -> Unit)? = null
+    onSave: (suspend (groupId: Long?, title: String, notes: String, dueAt: Long?) -> Unit)? = null,
+    initialDueAt: Long? = null
 ) {
     val isEditMode = taskToEdit != null
+    val originalDueAt = if (taskToEdit != null) taskToEdit.dueAt else initialDueAt
 
     var title by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.title.orEmpty()) }
     var notes by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.notes.orEmpty()) }
-    var dueAt by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.dueAt) }
+    var dueAt by remember(taskToEdit?.id, initialDueAt) { mutableStateOf(originalDueAt) }
     var groupId by remember(taskToEdit?.id) { mutableStateOf(taskToEdit?.itemId) }
     var saving by remember { mutableStateOf(false) }
     var failed by remember { mutableStateOf(false) }
     var discard by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val dirty = title != taskToEdit?.title.orEmpty() || notes != taskToEdit?.notes.orEmpty() ||
-        dueAt != taskToEdit?.dueAt || (!isEditMode && groupId != null)
+        dueAt != originalDueAt || (!isEditMode && groupId != null)
     fun requestClose() { if (!saving) { if (dirty) discard = true else onDismiss() } }
     androidx.activity.compose.BackHandler { requestClose() }
     val currentDirty by androidx.compose.runtime.rememberUpdatedState(dirty)

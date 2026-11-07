@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
 import androidx.room.Room
+import androidx.lifecycle.SavedStateHandle
 import com.taskpro.app.data.*
 import com.taskpro.app.notification.ReminderScheduler
 import com.taskpro.app.ui.screens.item.mergeDate
@@ -35,6 +36,15 @@ class TasksDataTest {
         db.itemDao().insert(Item(1, "Synthetic group")); Unit
     }
     @After fun close() { db.close() }
+
+    @Test fun timelineSelectionSurvivesSavedStateHandleRecreation() {
+        val handle = SavedStateHandle()
+        val first = TasksViewModel(repo, handle)
+        val futureDay = Instant.parse("2026-11-14T10:00:00Z").toEpochMilli()
+        first.selectDay(futureDay)
+        assertEquals(futureDay, first.selectedDay.value)
+        assertEquals(first.selectedDay.value, TasksViewModel(repo, handle).selectedDay.value)
+    }
 
     @Test fun editUpdatesSameIdAndLatestPositionWithoutDuplicates() = runBlocking {
         val original = Task(12, 1, "Original", "Notes", position = 4, createdAt = 9876)
