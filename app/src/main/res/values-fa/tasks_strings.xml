@@ -5,6 +5,15 @@
     <string name="tasks_filters_active">فیلترهای فعال: %1$s</string>
     <string-array name="tasks_weekdays"><item>ی</item><item>د</item><item>س</item><item>چ</item><item>پ</item><item>ج</item><item>ش</item></string-array>
     <string name="tasks_title">کارها</string>
+    <plurals name="tasks_daily_count">
+        <item quantity="one">%d کار</item>
+        <item quantity="other">%d کار</item>
+    </plurals>
+    <plurals name="tasks_daily_done">
+        <item quantity="one">%d انجام‌شده</item>
+        <item quantity="other">%d انجام‌شده</item>
+    </plurals>
+    <string name="tasks_daily_summary">%1$s · %2$s</string>
     <string name="tasks_status">وضعیت</string>
     <string name="tasks_group_name">نام گروه</string>
     <string name="tasks_new_group">گروه جدید</string>

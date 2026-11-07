@@ -15,14 +15,16 @@ fun ManagedTaskRow(task: Task, metadata: String?, onEdit: (() -> Unit)?,
     onStatus: (TaskStatus) -> Unit, onDelete: () -> Unit, modifier: Modifier = Modifier,
     overdue: Boolean = false, busy: Boolean = false, dragging: Boolean = false,
     onMoveUp: (() -> Unit)? = null, onMoveDown: (() -> Unit)? = null,
-    dragHandle: (@Composable () -> Unit)? = null, dense: Boolean = false) {
+    dragHandle: (@Composable () -> Unit)? = null, dense: Boolean = false,
+    leadingStripe: Boolean = false) {
     var menu by remember(task.id) { mutableStateOf(false) }
     var delete by remember(task.id) { mutableStateOf(false) }
     Box(modifier) {
         TaskRow(task, onEdit = { onEdit?.invoke() },
             onCompletionChange = { onStatus(if (it) TaskStatus.COMPLETED else TaskStatus.PENDING) },
             metadata = metadata, overdue = overdue, busy = busy, dragging = dragging,
-            onMenu = { menu = true }, compact = true, bodyEnabled = onEdit != null, dragHandle = dragHandle, dense = dense)
+            onMenu = { menu = true }, compact = true, bodyEnabled = onEdit != null,
+            dragHandle = dragHandle, dense = dense, leadingStripe = leadingStripe)
         DropdownMenu(menu && !dragging, { menu = false }) {
             fun action(status: TaskStatus) { menu = false; onStatus(status) }
             if (task.status != TaskStatus.COMPLETED) DropdownMenuItem(

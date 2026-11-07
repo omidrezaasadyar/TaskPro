@@ -1,6 +1,15 @@
 <resources>
     <string-array name="tasks_weekdays"><item>Sun</item><item>Mon</item><item>Tue</item><item>Wed</item><item>Thu</item><item>Fri</item><item>Sat</item></string-array>
     <string name="tasks_title">Tasks</string>
+    <plurals name="tasks_daily_count">
+        <item quantity="one">%d task</item>
+        <item quantity="other">%d tasks</item>
+    </plurals>
+    <plurals name="tasks_daily_done">
+        <item quantity="one">%d done</item>
+        <item quantity="other">%d done</item>
+    </plurals>
+    <string name="tasks_daily_summary">%1$s · %2$s</string>
     <string name="tasks_status">Status</string>
     <string name="tasks_group_name">Group name</string>
     <string name="tasks_new_group">New group</string>

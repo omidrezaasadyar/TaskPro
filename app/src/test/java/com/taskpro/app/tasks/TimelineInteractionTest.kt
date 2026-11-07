@@ -38,6 +38,13 @@ class TimelineInteractionTest {
     private fun choose(label: String, value: String) { button(label).performClick(); menu(value).performClick() }
     private fun date(value: String) { openFilters(); choose("Dates", value); closeFilters() }
     private fun status(value: String) { openFilters(); choose("Status", value); closeFilters() }
+    @Test fun dateHeaderShowsActualDailyProgressAndSwitchesWithWeek() {
+        screen()
+        compose.onNodeWithText("3 tasks · 1 done").assertExists()
+        compose.onNodeWithContentDescription("Sunday 18 October 2026").performClick()
+        compose.onNodeWithText("1 task · 0 done").assertExists()
+        compose.onNodeWithText("Tomorrow pending").assertExists()
+    }
     @Test fun undatedTodayAllDatesAndWeekControlsWork() {
         screen()
         date("Undated")

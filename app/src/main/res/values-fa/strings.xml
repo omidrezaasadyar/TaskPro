@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vaurivo</string>
+    <string name="intro_tagline">روزتان منظم.\nحساب‌هایتان امن.</string>
+    <string name="intro_skip">برای رد کردن ضربه بزنید</string>
     <string name="drawer_subtitle">کارهای خود را مدیریت کنید</string>
 
     <!-- Menu / navigation -->

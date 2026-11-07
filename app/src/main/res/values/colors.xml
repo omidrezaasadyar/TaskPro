@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="ic_launcher_background">#4F46E5</color>
+    <color name="vaurivo_splash_background">#F4F7F5</color>
 </resources>

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.*
@@ -23,6 +22,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -71,16 +71,21 @@ fun TimelineRoute(onGroups: () -> Unit, onSearch: () -> Unit,
         confirmButton = { TextButton(onClick = { failed = false }) { Text(stringResource(R.string.ok)) } })
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TasksViewSelector(groups: Boolean, onTimeline: () -> Unit, onGroups: () -> Unit) {
     val p = LocalVaurivoColors.current
-    Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        listOf(false to R.string.tasks_timeline, true to R.string.tasks_groups).forEach { (value, label) ->
-            Box(Modifier.width(IntrinsicSize.Min).widthIn(min = 96.dp).heightIn(min = 48.dp)
-                .selectable(groups == value, role = Role.Tab, onClick = if (value) onGroups else onTimeline), contentAlignment = Alignment.Center) {
-                Text(stringResource(label), Modifier.padding(horizontal = 12.dp, vertical = 10.dp), style = MaterialTheme.typography.labelLarge,
-                    color = if (groups == value) p.tasksAccent else p.textSecondary, textAlign = TextAlign.Center)
-                if (groups == value) Box(Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(2.dp).background(p.tasksAccent))
+    val options = listOf(R.string.tasks_timeline, R.string.tasks_groups)
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(selected = groups == (index == 1), onClick = if (index == 1) onGroups else onTimeline,
+                shape = SegmentedButtonDefaults.itemShape(index, options.size),
+                modifier = Modifier.weight(1f).heightIn(min = 48.dp), icon = {},
+                colors = SegmentedButtonDefaults.colors(activeContainerColor = p.tasksContainer,
+                    activeContentColor = p.tasksAccent, activeBorderColor = p.tasksAccent,
+                    inactiveContainerColor = p.surfaceRaised, inactiveContentColor = p.textSecondary,
+                    inactiveBorderColor = p.borderSubtle)) {
+                Text(stringResource(label), style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center)
             }
         }
     }
@@ -115,6 +120,11 @@ fun TimelineScreen(state: TasksState, onGroups: () -> Unit, onSearch: () -> Unit
         if (withDue) stringResource(R.string.tasks_due) else null).joinToString(" · ")
     val filterDescription = if (active) stringResource(R.string.tasks_filters_active, summary) else stringResource(R.string.tasks_all_dates)
     val sections = remember(state.rows, filter, state.now, state.zoneId) { timelineSections(state.rows, filter, state.now, zone) }
+    val (dayStart, dayEnd) = dayBounds(anchor, zone)
+    val dailyRows = remember(state.rows, dayStart, dayEnd) {
+        state.rows.filter { row -> row.task.dueAt?.let { it >= dayStart && it < dayEnd } == true }
+    }
+    val doneToday = dailyRows.count { it.task.status == TaskStatus.COMPLETED }
     fun resetToday() { selected = null; scopeName = DateScope.DAY.name }
     val dayWidth = if (LocalDensity.current.fontScale > 1.3f) 72.dp else 48.dp
     Scaffold(containerColor = p.canvas, bottomBar = {
@@ -123,10 +133,20 @@ fun TimelineScreen(state: TasksState, onGroups: () -> Unit, onSearch: () -> Unit
             icon = Icons.Default.Add, compact = true)
         }
     }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 16.dp)) {
+        LazyColumn(Modifier.fillMaxSize().padding(padding), contentPadding = PaddingValues(bottom = 16.dp)) {
             item {
-                Row(Modifier.fillMaxWidth().padding(start = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(stringResource(R.string.tasks_title), Modifier.weight(1f), style = MaterialTheme.typography.headlineSmall, color = p.textPrimary)
+                Column(Modifier.fillMaxWidth().background(p.surface).padding(horizontal = 16.dp, vertical = 12.dp)) {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(stringResource(R.string.tasks_title), style = MaterialTheme.typography.labelMedium, color = p.textTertiary)
+                        Text(dateText(anchor, "EEEE, d MMM", zone), style = MaterialTheme.typography.headlineSmall, color = p.textPrimary)
+                        Text(stringResource(R.string.tasks_daily_summary,
+                            pluralStringResource(R.plurals.tasks_daily_count, dailyRows.size, dailyRows.size),
+                            pluralStringResource(R.plurals.tasks_daily_done, doneToday, doneToday)),
+                            style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+                        LinearProgressIndicator(progress = { if (dailyRows.isEmpty()) 0f else doneToday.toFloat() / dailyRows.size },
+                            modifier = Modifier.width(160.dp).height(4.dp), color = p.vaultAccent, trackColor = p.borderSubtle)
+                    }
                     Box {
                         IconAction(stringResource(R.string.tasks_calendar), Icons.Default.CalendarMonth, { calendarMenu = true })
                         DropdownMenu(calendarMenu, { calendarMenu = false }) {
@@ -147,33 +167,48 @@ fun TimelineScreen(state: TasksState, onGroups: () -> Unit, onSearch: () -> Unit
                             .background(p.tasksAccent, RoundedCornerShape(3.dp)))
                     }
                 }
-                TasksViewSelector(false, {}, onGroups)
-                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).selectableGroup()) {
+                Spacer(Modifier.height(16.dp))
+                BoxWithConstraints(Modifier.fillMaxWidth()) {
+                val cellWidth = maxOf(dayWidth, maxWidth / 7)
+                Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState())) {
                     val weekdays = stringArrayResource(R.array.tasks_weekdays)
                     weekDays(anchor, zone).forEach { day ->
                         val chosen = dayBounds(anchor, zone).first == day
-                        Column(Modifier.width(dayWidth).heightIn(min = 48.dp)
-                            .background(if (chosen) p.tasksAccent else p.canvas, RoundedCornerShape(12.dp))
+                        val today = dayBounds(state.now, zone).first == day
+                        val (start, end) = dayBounds(day, zone)
+                        val hasTasks = state.rows.any { row -> row.task.dueAt?.let { it >= start && it < end } == true }
+                        Column(Modifier.width(cellWidth).heightIn(min = 64.dp)
+                            .background(if (chosen) p.tasksAccent else p.surface, RoundedCornerShape(12.dp))
+                            .then(if (today) Modifier.border(1.dp, p.vaultAccent, RoundedCornerShape(12.dp)) else Modifier)
                             .selectable(chosen, role = Role.Tab, onClick = { selected = day; scopeName = DateScope.DAY.name })
                             .semantics { contentDescription = dateText(day, "EEEE d MMMM yyyy", zone) },
-                            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterVertically)) {
                             val color = if (chosen) p.onAccent else p.textSecondary
                             Text(weekdays[java.util.Calendar.getInstance(zone).apply { timeInMillis = day }.get(java.util.Calendar.DAY_OF_WEEK) - 1], style = MaterialTheme.typography.bodySmall, color = color)
                             Text(dateText(day, "d", zone), style = MaterialTheme.typography.titleMedium, color = if (chosen) p.onAccent else p.textPrimary)
+                            Box(Modifier.size(5.dp).background(if (hasTasks) { if (chosen) p.onAccent else p.vaultAccent } else androidx.compose.ui.graphics.Color.Transparent,
+                                RoundedCornerShape(3.dp)))
                         }
                     }
                 }
+                }
+                Spacer(Modifier.height(12.dp))
+                TasksViewSelector(false, {}, onGroups)
                 if (active) Text(summary, Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp)
                     .semantics { liveRegion = LiveRegionMode.Polite },
                     style = MaterialTheme.typography.bodySmall, color = p.textSecondary)
+                }
+                HorizontalDivider(color = p.borderSubtle)
             }
             if (state.loading) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
             else if (state.failed) item {
-                Text(stringResource(R.string.tasks_action_failed), color = p.error)
-                TextButton(onClick = onRetry) { Text(stringResource(R.string.dashboard_retry)) }
+                Column(Modifier.padding(horizontal = 16.dp)) {
+                    Text(stringResource(R.string.tasks_action_failed), color = p.error)
+                    TextButton(onClick = onRetry) { Text(stringResource(R.string.dashboard_retry)) }
+                }
             }
             else if (sections.isEmpty()) item {
-                Column(Modifier.fillMaxWidth().padding(vertical = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(stringResource(R.string.tasks_empty), style = MaterialTheme.typography.titleMedium, color = p.textPrimary)
                     Text(stringResource(R.string.tasks_empty_hint), style = MaterialTheme.typography.bodyMedium, color = p.textSecondary)
                 }
@@ -186,12 +221,13 @@ fun TimelineScreen(state: TasksState, onGroups: () -> Unit, onSearch: () -> Unit
                         TimelineSection.UPCOMING -> R.string.tasks_upcoming
                         TimelineSection.EARLIER -> R.string.tasks_earlier
                         TimelineSection.UNDATED -> R.string.tasks_undated
-                    }), Modifier.padding(start = 4.dp, top = 12.dp, bottom = 4.dp).semantics { heading() }, style = MaterialTheme.typography.labelMedium, color = p.textTertiary)
+                    }), Modifier.padding(start = 16.dp, top = 12.dp, bottom = 4.dp).semantics { heading() }, style = MaterialTheme.typography.labelMedium, color = p.textTertiary)
                 }
                 items(rows, key = { it.task.id }) { row ->
                     ManagedTaskRow(row.task, taskMetadata(row.itemName, row.task.dueAt, zone), { onEdit(row) },
                         { onStatus(row.task, it) }, { onDelete(row.task) }, busy = busy,
-                        overdue = section == TimelineSection.OVERDUE, dense = true)
+                        overdue = section == TimelineSection.OVERDUE, dense = true, leadingStripe = true,
+                        modifier = Modifier.padding(horizontal = 12.dp))
                 }
             }
         }

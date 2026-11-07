@@ -102,10 +102,12 @@ class TaskEditorTest {
     }
     @Test fun bodyCheckboxAndOverflowAreIndependent() = independentActions(false)
     @Test fun denseTimelineBodyCheckboxAndOverflowAreIndependent() = independentActions(true)
-    private fun independentActions(dense: Boolean) {
+    @Test fun stripedTimelineBodyCheckboxAndOverflowAreIndependent() = independentActions(true, true)
+    private fun independentActions(dense: Boolean, leadingStripe: Boolean = false) {
         var edits = 0; val statuses = mutableListOf<TaskStatus>(); var deletes = 0
         compose.setContent { TaskProTheme(ThemeMode.DARK) {
-            ManagedTaskRow(Task(4, 1, "Synthetic row"), "Group", { edits++ }, { statuses.add(it) }, { deletes++ }, dense = dense)
+            ManagedTaskRow(Task(4, 1, "Synthetic row"), "Group", { edits++ }, { statuses.add(it) }, { deletes++ },
+                dense = dense, leadingStripe = leadingStripe)
         } }
         compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().forEach {
             assertTrue(it.layoutInfo.coordinates.size.height >= 48)

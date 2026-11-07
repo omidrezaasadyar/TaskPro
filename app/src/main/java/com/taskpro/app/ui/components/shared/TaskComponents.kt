@@ -1,6 +1,7 @@
 package com.taskpro.app.ui.components.shared
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.*
@@ -10,15 +11,31 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.dp
 import com.taskpro.app.R
 import com.taskpro.app.data.Task
 import com.taskpro.app.data.TaskStatus
 import com.taskpro.app.ui.theme.*
+
+private val darkTaskStripes = listOf(
+    Color(0xFFADB8FF), Color(0xFF5EDFB2), Color(0xFFF0C06B),
+    Color(0xFFFF8A7A), Color(0xFF8FC8DF), Color(0xFFD7A4D9)
+)
+private val lightTaskStripes = listOf(
+    Color(0xFF4654A6), Color(0xFF087556), Color(0xFF8A5700),
+    Color(0xFFB33C32), Color(0xFF286886), Color(0xFF7A4A84)
+)
+
+internal fun taskStripeColor(id: Long, dark: Boolean): Color {
+    val colors = if (dark) darkTaskStripes else lightTaskStripes
+    return colors[Math.floorMod(id, colors.size.toLong()).toInt()]
+}
 
 @Composable
 fun TaskStatusPresentation(status: TaskStatus, modifier: Modifier = Modifier, overdue: Boolean = false) {
@@ -50,8 +67,10 @@ fun TaskRow(task: Task, onEdit: () -> Unit, onCompletionChange: (Boolean) -> Uni
             onStatus: (() -> Unit)? = null, onMenu: (() -> Unit)? = null,
             onMoveUp: (() -> Unit)? = null, onMoveDown: (() -> Unit)? = null,
             dragHandle: (@Composable () -> Unit)? = null,
-            compact: Boolean = false, bodyEnabled: Boolean = true, dense: Boolean = false) {
+            compact: Boolean = false, bodyEnabled: Boolean = true, dense: Boolean = false,
+            leadingStripe: Boolean = false) {
     val p = LocalVaurivoColors.current
+    val dark = LocalAppDarkTheme.current
     val busyText = stringResource(R.string.component_busy)
     val dragText = stringResource(R.string.component_reordering)
     val editSource = remember { MutableInteractionSource() }
@@ -60,6 +79,12 @@ fun TaskRow(task: Task, onEdit: () -> Unit, onCompletionChange: (Boolean) -> Uni
         if (busy) stateDescription = busyText else if (dragging) stateDescription = dragText
     }) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+            if (leadingStripe) {
+                Box(Modifier.width(4.dp).height(VaurivoLayout.minimumTouchTarget)
+                    .background(taskStripeColor(task.id, dark).copy(alpha = if (task.status == TaskStatus.COMPLETED) 0.4f else 1f),
+                        VaurivoShapes.utility))
+                Spacer(Modifier.width(VaurivoSpacing.extraSmall))
+            }
             Box(Modifier.size(VaurivoLayout.minimumTouchTarget).toggleable(task.status == TaskStatus.COMPLETED,
                 enabled = !busy && !dragging, role = Role.Checkbox, onValueChange = onCompletionChange)
                 .semantics { contentDescription = task.title }, contentAlignment = Alignment.Center) {

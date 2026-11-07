@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Vaurivo</string>
+    <string name="intro_tagline">Your day, organized.\nYour logins, secured.</string>
+    <string name="intro_skip">Tap to skip</string>
     <string name="drawer_subtitle">Manage your to-dos</string>
 
     <!-- Menu / navigation -->
