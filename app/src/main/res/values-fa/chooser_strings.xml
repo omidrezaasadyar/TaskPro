@@ -7,6 +7,14 @@
     <string name="chooser_description">کارها، یادداشت‌ها، یادآوری‌ها و گاوصندوق رمزگذاری‌شده؛ همه در یک برنامهٔ خصوصی.</string>
     <string name="chooser_tasks_subtitle">دسترسی فوری</string>
     <string name="chooser_vault_subtitle">دسترسی امن</string>
-    <string name="chooser_version">v%1$s</string>
     <string name="chooser_build">v%1$s (%2$d)</string>
+    <string name="chooser_status">وضعیت</string>
+    <string name="chooser_total_tasks">همهٔ کارها</string>
+    <string name="chooser_vault_accounts">حساب‌های گاوصندوق</string>
+    <string name="chooser_last_backup">آخرین پشتیبان</string>
+    <string name="chooser_unlock_count">برای مشاهده باز کنید</string>
+    <string name="chooser_vault_setup">راه‌اندازی نشده</string>
+    <string name="chooser_backup_none">هنوز پشتیبانی ساخته نشده</string>
+    <string name="chooser_loading">در حال بارگذاری…</string>
+    <string name="chooser_encrypted">رمزگذاری‌شده</string>
 </resources>

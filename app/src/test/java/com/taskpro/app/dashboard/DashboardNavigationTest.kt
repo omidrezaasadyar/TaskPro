@@ -55,7 +55,7 @@ class DashboardNavigationTest {
         compose.onNodeWithText("Home").performClick()
         compose.onNodeWithContentDescription("Workspaces").performClick()
         await("Open instantly")
-        assertEquals(2, compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().size)
+        assertEquals(4, compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().size)
     }
 
     @Test fun homeVaultCardKeepsFirstUseAndLockedAuthenticationGates() {

@@ -63,9 +63,34 @@ class WorkspaceLaunchTest {
     @Test fun freshLaunchHasOnlyChooserActionsAndActualVersion() {
         awaitText("Open instantly")
         compose.onNodeWithText("Workspaces").assertDoesNotExist()
-        compose.onNodeWithText("v${com.taskpro.app.BuildConfig.VERSION_NAME}").assertExists()
-        assertEquals(2, compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().size)
+        compose.onNodeWithText("v${com.taskpro.app.BuildConfig.VERSION_NAME} (${com.taskpro.app.BuildConfig.VERSION_CODE})").assertExists()
+        compose.onNodeWithText("v${com.taskpro.app.BuildConfig.VERSION_NAME}").assertDoesNotExist()
+        assertEquals(4, compose.onAllNodes(hasClickAction()).fetchSemanticsNodes().size)
         assertNull((compose.activity.application as TaskProApp).container.vaultRepository.state.value.document)
+    }
+
+    @Test fun chooserStatusReadsTasksAndBackupButHidesLockedVaultCount() {
+        val app = compose.activity.application as TaskProApp
+        awaitText("All tasks")
+        runBlocking {
+            database.itemDao().insert(Item(92, "Status fixture"))
+            database.taskDao().insert(Task(92, 92, "Fixture one"))
+            database.taskDao().insert(Task(93, 92, "Fixture two"))
+            app.container.settingsRepository.recordBackup(1_782_000_000_000L)
+            app.container.vaultRepository.unlock("synthetic status master".toCharArray(), create = true)
+            app.container.vaultRepository.confirmRecoverySaved()
+            app.container.vaultRepository.edit { it.copy(records = listOf(VaultRecord(title = "Private fixture"))) }
+        }
+        awaitText("2")
+        awaitText("1")
+        awaitText(java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.MEDIUM,
+            java.text.DateFormat.SHORT, java.util.Locale.US).format(java.util.Date(1_782_000_000_000L)))
+        assertEquals(1, app.container.vaultRepository.state.value.document?.records?.size)
+        app.container.vaultRepository.lock()
+        awaitText("Unlock to view")
+        compose.onNodeWithText("1").assertDoesNotExist()
+        compose.onNodeWithText("Private fixture").assertDoesNotExist()
+        compose.onNodeWithText("No backup yet").assertDoesNotExist()
     }
 
     @Test fun recreatedActivityRestoresTaskDestinationAndData() {

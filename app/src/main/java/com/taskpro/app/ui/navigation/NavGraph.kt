@@ -18,7 +18,7 @@ import com.taskpro.app.ui.components.shared.WorkspaceTab
 import com.taskpro.app.ui.screens.dashboard.DashboardRoute
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.distinctUntilChanged
-import com.taskpro.app.ui.screens.WorkspaceScreen
+import com.taskpro.app.ui.screens.WorkspaceRoute
 import com.taskpro.app.ui.screens.vault.VaultScreen
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -59,7 +59,7 @@ fun NavGraph(navController: NavHostController) {
     }) { padding ->
     NavHost(navController = navController, startDestination = Screen.Workspace.route,
         modifier = Modifier.padding(padding).consumeWindowInsets(padding)) {
-        composable(Screen.Workspace.route) { WorkspaceScreen(vaultLocked = vaultLocked, onSelect = ::switch) }
+        composable(Screen.Workspace.route) { WorkspaceRoute(vaultLocked = vaultLocked, onSelect = ::switch) }
         composable(Screen.Dashboard.route) {
             DashboardRoute(vaultLocked, onTasks = { switch(Screen.Home); navController.popBackStack(Screen.Tasks.route, false) }, onVault = { switch(Screen.Vault) },
                 onSettings = { navController.navigate(Screen.Settings.route) }, onChooser = { switch(Screen.Workspace) },

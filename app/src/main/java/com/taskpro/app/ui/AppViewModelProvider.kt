@@ -13,6 +13,7 @@ import com.taskpro.app.ui.screens.item.ItemDetailViewModel
 import com.taskpro.app.ui.screens.item.ItemStatusListViewModel
 import com.taskpro.app.ui.screens.search.SearchViewModel
 import com.taskpro.app.ui.screens.settings.SettingsViewModel
+import com.taskpro.app.ui.screens.WorkspaceStatusViewModel
 
 /** Factories that wire each ViewModel to the app's repositories. */
 object AppViewModelProvider {
@@ -25,6 +26,8 @@ object AppViewModelProvider {
         initializer { ItemStatusListViewModel(this.createSavedStateHandle(), app().container.taskRepository) }
         initializer { SearchViewModel(app().container.taskRepository) }
         initializer { SettingsViewModel(app().container.settingsRepository, app().container.backupRepository) }
+        initializer { WorkspaceStatusViewModel(app().container.taskRepository,
+            app().container.settingsRepository, app().container.vaultRepository) }
     }
 }
 

@@ -24,6 +24,7 @@ import com.taskpro.app.R
 import com.taskpro.app.settings.ThemeMode
 import com.taskpro.app.ui.navigation.Screen
 import com.taskpro.app.ui.screens.WorkspaceScreen
+import com.taskpro.app.ui.screens.WorkspaceStatus
 import com.taskpro.app.ui.theme.TaskProTheme
 import org.junit.Assert.*
 import org.junit.Rule
@@ -79,7 +80,9 @@ class WorkspaceVisualTest {
                 LocalDensity provides Density(LocalDensity.current.density, scale)) {
                 TaskProTheme(if (dark) ThemeMode.DARK else ThemeMode.LIGHT) {
                     Box(Modifier.requiredSize(width.dp, height.dp).testTag("chooser")) {
-                        WorkspaceScreen(onSelect = destinations::add)
+                        WorkspaceScreen(vaultLocked = false,
+                            status = WorkspaceStatus(totalTasks = 24, lastBackupAt = 1_782_000_000_000L,
+                                vaultAccounts = 12, vaultExists = true), onSelect = destinations::add)
                     }
                 }
             }
@@ -87,14 +90,17 @@ class WorkspaceVisualTest {
         compose.waitForIdle()
         capture(name)
         val cards = compose.onAllNodes(hasClickAction()).fetchSemanticsNodes()
-        assertEquals("Only the two real destinations are interactive", 2, cards.size)
+        assertEquals("Main and status cards reach the same two destinations", 4, cards.size)
         cards.forEach {
             assertTrue(it.layoutInfo.coordinates.size.width >= 48)
             assertTrue(it.layoutInfo.coordinates.size.height >= 48)
         }
         val paired = width >= 340 && scale <= 1.3f
         // boundsInRoot are clipped for off-screen items; use layout coordinates for geometry.
-        val positions = cards.map { it.layoutInfo.coordinates.localToRoot(androidx.compose.ui.geometry.Offset.Zero) }
+        val mainCards = listOf(R.string.workspace_tasks, R.string.vault_title).map { id ->
+            compose.onNode(hasText(context.getString(id)) and hasClickAction()).fetchSemanticsNode()
+        }
+        val positions = mainCards.map { it.layoutInfo.coordinates.localToRoot(androidx.compose.ui.geometry.Offset.Zero) }
         if (paired) {
             assertEquals(positions[0].y, positions[1].y, 1f)
             assertTrue(if (rtl) positions[0].x > positions[1].x else positions[0].x < positions[1].x)
@@ -105,6 +111,12 @@ class WorkspaceVisualTest {
             assertEquals(destination, destinations.last())
             assertEquals("A single card tap invokes exactly one destination", destinations.size, if (destination == Screen.Home) 1 else 2)
         }
+        listOf(R.string.chooser_total_tasks to Screen.Home, R.string.chooser_vault_accounts to Screen.Vault)
+            .forEach { (id, destination) ->
+                compose.onNode(hasText(context.getString(id)) and hasClickAction()).performScrollTo().performClick()
+                assertEquals(destination, destinations.last())
+            }
+        assertEquals(4, destinations.size)
         if (scale > 1 || height < 500) capture("$name-scrolled")
         // Every localized text must fit its actual paragraph width and line height.
         compose.onAllNodes(hasText("", substring = true), useUnmergedTree = true).fetchSemanticsNodes()
